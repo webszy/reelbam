@@ -1,0 +1,58 @@
+{
+  "name": "reelbam",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "node --env-file-if-exists=.env node_modules/nuxt/bin/nuxt.mjs build",
+    "dev": "node --env-file-if-exists=.env node_modules/nuxt/bin/nuxt.mjs dev",
+    "generate": "node --env-file-if-exists=.env node_modules/nuxt/bin/nuxt.mjs generate",
+    "preview": "node --env-file-if-exists=.env node_modules/nuxt/bin/nuxt.mjs preview",
+    "preview:worker": "pnpm run build && node --env-file-if-exists=.env node_modules/wrangler/bin/wrangler.js dev",
+    "cf-typegen": "mkdir -p .wrangler/types && wrangler types .wrangler/types/worker-configuration.d.ts",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "typecheck": "node --env-file-if-exists=.env node_modules/nuxt/bin/nuxt.mjs typecheck",
+    "typecheck:video": "tsc --project tsconfig.video.json",
+    "test:video": "node --experimental-transform-types --test packages/video-core/test/*.test.ts",
+    "test:data": "node --experimental-transform-types --import ./scripts/alias-register.mjs --test packages/data/test/*.test.ts",
+    "test:video-engine": "node --experimental-transform-types --import ./scripts/alias-register.mjs --test packages/data/test/video-engine.sqlite.test.ts workers/video-worker/test/queue-roundtrip.test.mjs",
+    "video:local:init": "node scripts/video-local-init.mjs",
+    "video:worker:dev": "node node_modules/wrangler/bin/wrangler.js dev --local --config workers/video-worker/wrangler.jsonc --persist-to .wrangler/state/video-local --port 8788",
+    "video:dev": "node node_modules/wrangler/bin/wrangler.js dev --local --config wrangler.video-local.jsonc --config workers/video-worker/wrangler.jsonc --persist-to .wrangler/state/video-local",
+    "db:generate": "drizzle-kit generate",
+    "db:check": "drizzle-kit check",
+    "db:studio": "drizzle-kit studio",
+    "test:unit": "node --experimental-transform-types --import ./scripts/alias-register.mjs --test app/utils/safe-return-to.test.ts server/api/webhooks/creem.test.ts server/services/billing-checkout.test.ts server/utils/zBilling/domain/account-summary.test.ts server/utils/zBilling/domain/billing-history.test.ts server/utils/zBilling/domain/refund.test.ts server/utils/zBilling/test/create-checkout.test.ts server/utils/zBilling/test/creem.test.ts server/utils/zBilling/test/handle-webhook.test.ts server/services/user-profile.test.ts shared/template-catalog.test.ts server/templates/text-to-video.test.ts",
+    "deploy": "node --env-file-if-exists=.env scripts/check-deployment.mjs && pnpm build && wrangler deploy",
+    "deploy:check": "pnpm build && wrangler deploy --dry-run",
+    "db:deploy-local": "wrangler d1 migrations apply DB --local",
+    "db:deploy": "wrangler d1 migrations apply DB --remote",
+    "db:seed:generate": "node --experimental-strip-types scripts/generate-catalog.mjs",
+    "db:seed-local": "wrangler d1 execute DB --local --file database/catalog.sql",
+    "db:seed": "wrangler d1 execute DB --remote --file database/catalog.sql"
+  },
+  "dependencies": {
+    "@clerk/nuxt": "2.6.21",
+    "@nuxt/ui": "4.10.0",
+    "drizzle-orm": "0.45.2",
+    "nuxt": "4.5.2",
+    "vue": "3.5.40",
+    "vue-router": "5.2.0"
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "1.2.121",
+    "@nuxt/eslint": "1.16.0",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "22.20.1",
+    "drizzle-kit": "0.31.10",
+    "ofetch": "1.5.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3",
+    "vue-tsc": "3.3.8",
+    "wrangler": "4.114.0"
+  },
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
+  }
+}

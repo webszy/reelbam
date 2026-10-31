@@ -1,0 +1,15 @@
+packages:
+  - 'packages/*'
+
+allowBuilds:
+  esbuild: true
+  unrs-resolver: true
+  vue-demi: true
+  workerd: true
+minimumReleaseAgeExclude:
+  - '@clerk/backend@3.13.0'
+  - '@clerk/nuxt@2.6.21'
+  - '@clerk/shared@4.25.7'
+  - '@clerk/vue@2.4.19'
+patchedDependencies:
+  '@clerk/nuxt@2.6.21': patches/@clerk__nuxt@2.6.21.patch

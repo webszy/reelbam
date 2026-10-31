@@ -1,0 +1,2087 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "9b9d794b-f9d5-4346-96d1-82b46b9d6e23",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "billing_customers": {
+      "name": "billing_customers",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_customer_id": {
+          "name": "provider_customer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email_snapshot": {
+          "name": "email_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "billing_customers_user_provider_unique": {
+          "name": "billing_customers_user_provider_unique",
+          "columns": [
+            "user_id",
+            "provider"
+          ],
+          "isUnique": true
+        },
+        "billing_customers_provider_customer_id_unique": {
+          "name": "billing_customers_provider_customer_id_unique",
+          "columns": [
+            "provider",
+            "provider_customer_id"
+          ],
+          "isUnique": true
+        },
+        "billing_customers_user_id_idx": {
+          "name": "billing_customers_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "billing_customers_user_id_users_id_fk": {
+          "name": "billing_customers_user_id_users_id_fk",
+          "tableFrom": "billing_customers",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "billing_customers_provider_check": {
+          "name": "billing_customers_provider_check",
+          "value": "\"billing_customers\".\"provider\" in ('creem')"
+        }
+      }
+    },
+    "billing_disputes": {
+      "name": "billing_disputes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_dispute_id": {
+          "name": "provider_dispute_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_transaction_id": {
+          "name": "provider_transaction_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "billing_disputes_provider_dispute_id_unique": {
+          "name": "billing_disputes_provider_dispute_id_unique",
+          "columns": [
+            "provider",
+            "provider_dispute_id"
+          ],
+          "isUnique": true
+        },
+        "billing_disputes_order_id_idx": {
+          "name": "billing_disputes_order_id_idx",
+          "columns": [
+            "order_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "billing_disputes_order_id_billing_orders_id_fk": {
+          "name": "billing_disputes_order_id_billing_orders_id_fk",
+          "tableFrom": "billing_disputes",
+          "tableTo": "billing_orders",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "billing_disputes_status_check": {
+          "name": "billing_disputes_status_check",
+          "value": "\"billing_disputes\".\"status\" in ('opened')"
+        },
+        "billing_disputes_provider_check": {
+          "name": "billing_disputes_provider_check",
+          "value": "\"billing_disputes\".\"provider\" in ('creem')"
+        },
+        "billing_disputes_amount_check": {
+          "name": "billing_disputes_amount_check",
+          "value": "\"billing_disputes\".\"amount\" is null or \"billing_disputes\".\"amount\" > 0"
+        },
+        "billing_disputes_currency_check": {
+          "name": "billing_disputes_currency_check",
+          "value": "\"billing_disputes\".\"currency\" is null\n        or (length(\"billing_disputes\".\"currency\") = 3 and \"billing_disputes\".\"currency\" = upper(\"billing_disputes\".\"currency\"))"
+        }
+      }
+    },
+    "billing_orders": {
+      "name": "billing_orders",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "price_id": {
+          "name": "price_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "subscription_id": {
+          "name": "subscription_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_paid_amount": {
+          "name": "provider_paid_amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "refund_version": {
+          "name": "refund_version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "product_name_snapshot": {
+          "name": "product_name_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "price_code_snapshot": {
+          "name": "price_code_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entitlement_snapshot": {
+          "name": "entitlement_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_checkout_id": {
+          "name": "provider_checkout_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "provider_checkout_url": {
+          "name": "provider_checkout_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "provider_order_id": {
+          "name": "provider_order_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "checkout_idempotency_key": {
+          "name": "checkout_idempotency_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "failure_code": {
+          "name": "failure_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "paid_at": {
+          "name": "paid_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "failed_at": {
+          "name": "failed_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "expired_at": {
+          "name": "expired_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "refunded_at": {
+          "name": "refunded_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "billing_orders_provider_checkout_id_unique": {
+          "name": "billing_orders_provider_checkout_id_unique",
+          "columns": [
+            "provider",
+            "provider_checkout_id"
+          ],
+          "isUnique": true,
+          "where": "\"billing_orders\".\"provider_checkout_id\" is not null"
+        },
+        "billing_orders_provider_order_id_unique": {
+          "name": "billing_orders_provider_order_id_unique",
+          "columns": [
+            "provider",
+            "provider_order_id"
+          ],
+          "isUnique": true,
+          "where": "\"billing_orders\".\"provider_order_id\" is not null"
+        },
+        "billing_orders_user_checkout_idempotency_key_unique": {
+          "name": "billing_orders_user_checkout_idempotency_key_unique",
+          "columns": [
+            "user_id",
+            "checkout_idempotency_key"
+          ],
+          "isUnique": true,
+          "where": "\"billing_orders\".\"checkout_idempotency_key\" is not null"
+        },
+        "billing_orders_user_id_idx": {
+          "name": "billing_orders_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        },
+        "billing_orders_product_id_idx": {
+          "name": "billing_orders_product_id_idx",
+          "columns": [
+            "product_id"
+          ],
+          "isUnique": false
+        },
+        "billing_orders_price_id_idx": {
+          "name": "billing_orders_price_id_idx",
+          "columns": [
+            "price_id"
+          ],
+          "isUnique": false
+        },
+        "billing_orders_customer_id_idx": {
+          "name": "billing_orders_customer_id_idx",
+          "columns": [
+            "customer_id"
+          ],
+          "isUnique": false
+        },
+        "billing_orders_subscription_id_idx": {
+          "name": "billing_orders_subscription_id_idx",
+          "columns": [
+            "subscription_id"
+          ],
+          "isUnique": false
+        },
+        "billing_orders_status_idx": {
+          "name": "billing_orders_status_idx",
+          "columns": [
+            "status"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "billing_orders_user_id_users_id_fk": {
+          "name": "billing_orders_user_id_users_id_fk",
+          "tableFrom": "billing_orders",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "billing_orders_product_id_billing_products_id_fk": {
+          "name": "billing_orders_product_id_billing_products_id_fk",
+          "tableFrom": "billing_orders",
+          "tableTo": "billing_products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "billing_orders_price_id_billing_prices_id_fk": {
+          "name": "billing_orders_price_id_billing_prices_id_fk",
+          "tableFrom": "billing_orders",
+          "tableTo": "billing_prices",
+          "columnsFrom": [
+            "price_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "billing_orders_customer_id_billing_customers_id_fk": {
+          "name": "billing_orders_customer_id_billing_customers_id_fk",
+          "tableFrom": "billing_orders",
+          "tableTo": "billing_customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "billing_orders_subscription_id_billing_subscriptions_id_fk": {
+          "name": "billing_orders_subscription_id_billing_subscriptions_id_fk",
+          "tableFrom": "billing_orders",
+          "tableTo": "billing_subscriptions",
+          "columnsFrom": [
+            "subscription_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "billing_orders_status_check": {
+          "name": "billing_orders_status_check",
+          "value": "\"billing_orders\".\"status\" in ('pending', 'paid', 'failed', 'expired', 'refunded', 'partially_refunded')"
+        },
+        "billing_orders_amount_check": {
+          "name": "billing_orders_amount_check",
+          "value": "\"billing_orders\".\"amount\" > 0"
+        },
+        "billing_orders_provider_paid_amount_check": {
+          "name": "billing_orders_provider_paid_amount_check",
+          "value": "\"billing_orders\".\"provider_paid_amount\" is null or \"billing_orders\".\"provider_paid_amount\" > 0"
+        },
+        "billing_orders_refund_version_check": {
+          "name": "billing_orders_refund_version_check",
+          "value": "\"billing_orders\".\"refund_version\" >= 0"
+        },
+        "billing_orders_currency_check": {
+          "name": "billing_orders_currency_check",
+          "value": "length(\"billing_orders\".\"currency\") = 3 and \"billing_orders\".\"currency\" = upper(\"billing_orders\".\"currency\")"
+        },
+        "billing_orders_provider_check": {
+          "name": "billing_orders_provider_check",
+          "value": "\"billing_orders\".\"provider\" in ('creem')"
+        }
+      }
+    },
+    "billing_prices": {
+      "name": "billing_prices",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "billing_type": {
+          "name": "billing_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "billing_interval": {
+          "name": "billing_interval",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "interval_count": {
+          "name": "interval_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_product_id": {
+          "name": "provider_product_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "provider_price_id": {
+          "name": "provider_price_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "active": {
+          "name": "active",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "billing_prices_code_unique": {
+          "name": "billing_prices_code_unique",
+          "columns": [
+            "code"
+          ],
+          "isUnique": true
+        },
+        "billing_prices_provider_price_id_unique": {
+          "name": "billing_prices_provider_price_id_unique",
+          "columns": [
+            "provider",
+            "provider_price_id"
+          ],
+          "isUnique": true,
+          "where": "\"billing_prices\".\"provider_price_id\" is not null"
+        },
+        "billing_prices_product_id_idx": {
+          "name": "billing_prices_product_id_idx",
+          "columns": [
+            "product_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "billing_prices_product_id_billing_products_id_fk": {
+          "name": "billing_prices_product_id_billing_products_id_fk",
+          "tableFrom": "billing_prices",
+          "tableTo": "billing_products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "billing_prices_billing_type_check": {
+          "name": "billing_prices_billing_type_check",
+          "value": "\"billing_prices\".\"billing_type\" in ('one_time', 'recurring')"
+        },
+        "billing_prices_interval_check": {
+          "name": "billing_prices_interval_check",
+          "value": "(\n        (\"billing_prices\".\"billing_type\" = 'one_time'\n          and \"billing_prices\".\"billing_interval\" is null\n          and \"billing_prices\".\"interval_count\" is null)\n        or (\"billing_prices\".\"billing_type\" = 'recurring'\n          and \"billing_prices\".\"billing_interval\" in ('month', 'year')\n          and \"billing_prices\".\"interval_count\" >= 1)\n      )"
+        },
+        "billing_prices_amount_check": {
+          "name": "billing_prices_amount_check",
+          "value": "\"billing_prices\".\"amount\" > 0"
+        },
+        "billing_prices_currency_check": {
+          "name": "billing_prices_currency_check",
+          "value": "length(\"billing_prices\".\"currency\") = 3 and \"billing_prices\".\"currency\" = upper(\"billing_prices\".\"currency\")"
+        },
+        "billing_prices_provider_check": {
+          "name": "billing_prices_provider_check",
+          "value": "\"billing_prices\".\"provider\" in ('creem')"
+        }
+      }
+    },
+    "billing_products": {
+      "name": "billing_products",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "product_kind": {
+          "name": "product_kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "active": {
+          "name": "active",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "billing_products_code_unique": {
+          "name": "billing_products_code_unique",
+          "columns": [
+            "code"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "billing_products_product_kind_check": {
+          "name": "billing_products_product_kind_check",
+          "value": "\"billing_products\".\"product_kind\" in ('credit_pack', 'subscription')"
+        }
+      }
+    },
+    "billing_refund_credit_adjustments": {
+      "name": "billing_refund_credit_adjustments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "refund_id": {
+          "name": "refund_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "grant_id": {
+          "name": "grant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "target_quantity": {
+          "name": "target_quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "applied_quantity": {
+          "name": "applied_quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "shortfall_quantity": {
+          "name": "shortfall_quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entitlement_transaction_id": {
+          "name": "entitlement_transaction_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "billing_refund_credit_adjustments_refund_grant_unique": {
+          "name": "billing_refund_credit_adjustments_refund_grant_unique",
+          "columns": [
+            "refund_id",
+            "grant_id"
+          ],
+          "isUnique": true
+        },
+        "billing_refund_credit_adjustments_refund_id_idx": {
+          "name": "billing_refund_credit_adjustments_refund_id_idx",
+          "columns": [
+            "refund_id"
+          ],
+          "isUnique": false
+        },
+        "billing_refund_credit_adjustments_grant_id_idx": {
+          "name": "billing_refund_credit_adjustments_grant_id_idx",
+          "columns": [
+            "grant_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "billing_refund_credit_adjustments_refund_id_billing_refunds_id_fk": {
+          "name": "billing_refund_credit_adjustments_refund_id_billing_refunds_id_fk",
+          "tableFrom": "billing_refund_credit_adjustments",
+          "tableTo": "billing_refunds",
+          "columnsFrom": [
+            "refund_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "billing_refund_credit_adjustments_grant_id_entitlement_grants_id_fk": {
+          "name": "billing_refund_credit_adjustments_grant_id_entitlement_grants_id_fk",
+          "tableFrom": "billing_refund_credit_adjustments",
+          "tableTo": "entitlement_grants",
+          "columnsFrom": [
+            "grant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "billing_refund_credit_adjustments_entitlement_transaction_id_entitlement_transactions_id_fk": {
+          "name": "billing_refund_credit_adjustments_entitlement_transaction_id_entitlement_transactions_id_fk",
+          "tableFrom": "billing_refund_credit_adjustments",
+          "tableTo": "entitlement_transactions",
+          "columnsFrom": [
+            "entitlement_transaction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "billing_refund_credit_adjustments_quantity_check": {
+          "name": "billing_refund_credit_adjustments_quantity_check",
+          "value": "\"billing_refund_credit_adjustments\".\"target_quantity\" >= 0\n        and \"billing_refund_credit_adjustments\".\"applied_quantity\" >= 0\n        and \"billing_refund_credit_adjustments\".\"shortfall_quantity\" >= 0\n        and \"billing_refund_credit_adjustments\".\"target_quantity\" = \"billing_refund_credit_adjustments\".\"applied_quantity\" + \"billing_refund_credit_adjustments\".\"shortfall_quantity\""
+        }
+      }
+    },
+    "billing_refunds": {
+      "name": "billing_refunds",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_refund_id": {
+          "name": "provider_refund_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reason_code": {
+          "name": "reason_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "succeeded_at": {
+          "name": "succeeded_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "failed_at": {
+          "name": "failed_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "billing_refunds_provider_refund_id_unique": {
+          "name": "billing_refunds_provider_refund_id_unique",
+          "columns": [
+            "provider",
+            "provider_refund_id"
+          ],
+          "isUnique": true,
+          "where": "\"billing_refunds\".\"provider_refund_id\" is not null"
+        },
+        "billing_refunds_order_id_idx": {
+          "name": "billing_refunds_order_id_idx",
+          "columns": [
+            "order_id"
+          ],
+          "isUnique": false
+        },
+        "billing_refunds_status_idx": {
+          "name": "billing_refunds_status_idx",
+          "columns": [
+            "status"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "billing_refunds_order_id_billing_orders_id_fk": {
+          "name": "billing_refunds_order_id_billing_orders_id_fk",
+          "tableFrom": "billing_refunds",
+          "tableTo": "billing_orders",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "billing_refunds_status_check": {
+          "name": "billing_refunds_status_check",
+          "value": "\"billing_refunds\".\"status\" in ('pending', 'succeeded', 'failed', 'canceled')"
+        },
+        "billing_refunds_amount_check": {
+          "name": "billing_refunds_amount_check",
+          "value": "\"billing_refunds\".\"amount\" > 0"
+        },
+        "billing_refunds_currency_check": {
+          "name": "billing_refunds_currency_check",
+          "value": "length(\"billing_refunds\".\"currency\") = 3 and \"billing_refunds\".\"currency\" = upper(\"billing_refunds\".\"currency\")"
+        },
+        "billing_refunds_provider_check": {
+          "name": "billing_refunds_provider_check",
+          "value": "\"billing_refunds\".\"provider\" in ('creem')"
+        }
+      }
+    },
+    "billing_subscriptions": {
+      "name": "billing_subscriptions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "price_id": {
+          "name": "price_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_subscription_id": {
+          "name": "provider_subscription_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "current_period_start": {
+          "name": "current_period_start",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "current_period_end": {
+          "name": "current_period_end",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "billing_interval": {
+          "name": "billing_interval",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "interval_count": {
+          "name": "interval_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entitlement_snapshot": {
+          "name": "entitlement_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "cancel_at_period_end": {
+          "name": "cancel_at_period_end",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "canceled_at": {
+          "name": "canceled_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "ended_at": {
+          "name": "ended_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "billing_subscriptions_provider_subscription_id_unique": {
+          "name": "billing_subscriptions_provider_subscription_id_unique",
+          "columns": [
+            "provider",
+            "provider_subscription_id"
+          ],
+          "isUnique": true,
+          "where": "\"billing_subscriptions\".\"provider_subscription_id\" is not null"
+        },
+        "billing_subscriptions_user_id_idx": {
+          "name": "billing_subscriptions_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        },
+        "billing_subscriptions_product_id_idx": {
+          "name": "billing_subscriptions_product_id_idx",
+          "columns": [
+            "product_id"
+          ],
+          "isUnique": false
+        },
+        "billing_subscriptions_price_id_idx": {
+          "name": "billing_subscriptions_price_id_idx",
+          "columns": [
+            "price_id"
+          ],
+          "isUnique": false
+        },
+        "billing_subscriptions_customer_id_idx": {
+          "name": "billing_subscriptions_customer_id_idx",
+          "columns": [
+            "customer_id"
+          ],
+          "isUnique": false
+        },
+        "billing_subscriptions_status_idx": {
+          "name": "billing_subscriptions_status_idx",
+          "columns": [
+            "status"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "billing_subscriptions_user_id_users_id_fk": {
+          "name": "billing_subscriptions_user_id_users_id_fk",
+          "tableFrom": "billing_subscriptions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "billing_subscriptions_product_id_billing_products_id_fk": {
+          "name": "billing_subscriptions_product_id_billing_products_id_fk",
+          "tableFrom": "billing_subscriptions",
+          "tableTo": "billing_products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "billing_subscriptions_price_id_billing_prices_id_fk": {
+          "name": "billing_subscriptions_price_id_billing_prices_id_fk",
+          "tableFrom": "billing_subscriptions",
+          "tableTo": "billing_prices",
+          "columnsFrom": [
+            "price_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "billing_subscriptions_customer_id_billing_customers_id_fk": {
+          "name": "billing_subscriptions_customer_id_billing_customers_id_fk",
+          "tableFrom": "billing_subscriptions",
+          "tableTo": "billing_customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "billing_subscriptions_status_check": {
+          "name": "billing_subscriptions_status_check",
+          "value": "\"billing_subscriptions\".\"status\" in ('pending', 'trialing', 'active', 'past_due', 'paused', 'canceled', 'expired')"
+        },
+        "billing_subscriptions_provider_check": {
+          "name": "billing_subscriptions_provider_check",
+          "value": "\"billing_subscriptions\".\"provider\" in ('creem')"
+        },
+        "billing_subscriptions_interval_check": {
+          "name": "billing_subscriptions_interval_check",
+          "value": "\"billing_subscriptions\".\"billing_interval\" in ('month', 'year') and \"billing_subscriptions\".\"interval_count\" >= 1"
+        },
+        "billing_subscriptions_period_check": {
+          "name": "billing_subscriptions_period_check",
+          "value": "(\n        \"billing_subscriptions\".\"current_period_start\" is null\n        or \"billing_subscriptions\".\"current_period_end\" is null\n        or \"billing_subscriptions\".\"current_period_end\" > \"billing_subscriptions\".\"current_period_start\"\n      )"
+        }
+      }
+    },
+    "billing_webhook_events": {
+      "name": "billing_webhook_events",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider_event_id": {
+          "name": "provider_event_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "event_type": {
+          "name": "event_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "payload_hash": {
+          "name": "payload_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "attempt_count": {
+          "name": "attempt_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "error_code": {
+          "name": "error_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "processed_at": {
+          "name": "processed_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "billing_webhook_events_provider_event_id_unique": {
+          "name": "billing_webhook_events_provider_event_id_unique",
+          "columns": [
+            "provider",
+            "provider_event_id"
+          ],
+          "isUnique": true
+        },
+        "billing_webhook_events_status_idx": {
+          "name": "billing_webhook_events_status_idx",
+          "columns": [
+            "status"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "billing_webhook_events_provider_check": {
+          "name": "billing_webhook_events_provider_check",
+          "value": "\"billing_webhook_events\".\"provider\" in ('creem')"
+        },
+        "billing_webhook_events_status_check": {
+          "name": "billing_webhook_events_status_check",
+          "value": "\"billing_webhook_events\".\"status\" in ('received', 'processing', 'processed', 'failed')"
+        },
+        "billing_webhook_events_attempt_count_check": {
+          "name": "billing_webhook_events_attempt_count_check",
+          "value": "\"billing_webhook_events\".\"attempt_count\" >= 0"
+        }
+      }
+    },
+    "entitlement_grants": {
+      "name": "entitlement_grants",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entitlement_key": {
+          "name": "entitlement_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entitlement_type": {
+          "name": "entitlement_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_type": {
+          "name": "source_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_id": {
+          "name": "source_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "period_key": {
+          "name": "period_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "granted_quantity": {
+          "name": "granted_quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "remaining_quantity": {
+          "name": "remaining_quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "effective_at": {
+          "name": "effective_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "entitlement_grants_source_period_unique": {
+          "name": "entitlement_grants_source_period_unique",
+          "columns": [
+            "source_type",
+            "source_id",
+            "entitlement_key",
+            "period_key"
+          ],
+          "isUnique": true
+        },
+        "entitlement_grants_user_lookup_idx": {
+          "name": "entitlement_grants_user_lookup_idx",
+          "columns": [
+            "user_id",
+            "entitlement_key",
+            "status",
+            "expires_at",
+            "effective_at"
+          ],
+          "isUnique": false
+        },
+        "entitlement_grants_user_id_idx": {
+          "name": "entitlement_grants_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "entitlement_grants_user_id_users_id_fk": {
+          "name": "entitlement_grants_user_id_users_id_fk",
+          "tableFrom": "entitlement_grants",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "entitlement_grants_type_check": {
+          "name": "entitlement_grants_type_check",
+          "value": "\"entitlement_grants\".\"entitlement_type\" in ('consumable', 'feature', 'limit')"
+        },
+        "entitlement_grants_source_type_check": {
+          "name": "entitlement_grants_source_type_check",
+          "value": "\"entitlement_grants\".\"source_type\" in ('order', 'subscription_cycle', 'admin', 'migration', 'promotion')"
+        },
+        "entitlement_grants_status_check": {
+          "name": "entitlement_grants_status_check",
+          "value": "\"entitlement_grants\".\"status\" in ('active', 'expired', 'revoked')"
+        },
+        "entitlement_grants_quantity_check": {
+          "name": "entitlement_grants_quantity_check",
+          "value": "(\n        (\"entitlement_grants\".\"entitlement_type\" = 'feature'\n          and \"entitlement_grants\".\"granted_quantity\" is null\n          and \"entitlement_grants\".\"remaining_quantity\" is null)\n        or (\"entitlement_grants\".\"entitlement_type\" in ('consumable', 'limit')\n          and \"entitlement_grants\".\"granted_quantity\" >= 0\n          and \"entitlement_grants\".\"remaining_quantity\" >= 0\n          and \"entitlement_grants\".\"remaining_quantity\" <= \"entitlement_grants\".\"granted_quantity\")\n      )"
+        }
+      }
+    },
+    "entitlement_transactions": {
+      "name": "entitlement_transactions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "grant_id": {
+          "name": "grant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "transaction_type": {
+          "name": "transaction_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_type": {
+          "name": "source_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_id": {
+          "name": "source_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "balance_before": {
+          "name": "balance_before",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "balance_after": {
+          "name": "balance_after",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "idempotency_key": {
+          "name": "idempotency_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "entitlement_transactions_idempotency_key_unique": {
+          "name": "entitlement_transactions_idempotency_key_unique",
+          "columns": [
+            "idempotency_key"
+          ],
+          "isUnique": true
+        },
+        "entitlement_transactions_user_id_idx": {
+          "name": "entitlement_transactions_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        },
+        "entitlement_transactions_grant_id_idx": {
+          "name": "entitlement_transactions_grant_id_idx",
+          "columns": [
+            "grant_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "entitlement_transactions_user_id_users_id_fk": {
+          "name": "entitlement_transactions_user_id_users_id_fk",
+          "tableFrom": "entitlement_transactions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "entitlement_transactions_grant_id_entitlement_grants_id_fk": {
+          "name": "entitlement_transactions_grant_id_entitlement_grants_id_fk",
+          "tableFrom": "entitlement_transactions",
+          "tableTo": "entitlement_grants",
+          "columnsFrom": [
+            "grant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "entitlement_transactions_type_check": {
+          "name": "entitlement_transactions_type_check",
+          "value": "\"entitlement_transactions\".\"transaction_type\" in ('grant', 'consume', 'refund', 'expire', 'adjustment', 'revoke')"
+        },
+        "entitlement_transactions_quantity_sign_check": {
+          "name": "entitlement_transactions_quantity_sign_check",
+          "value": "(\n        (\"entitlement_transactions\".\"transaction_type\" in ('grant', 'refund') and \"entitlement_transactions\".\"quantity\" > 0)\n        or (\"entitlement_transactions\".\"transaction_type\" in ('consume', 'expire', 'revoke')\n          and \"entitlement_transactions\".\"quantity\" < 0)\n        or (\"entitlement_transactions\".\"transaction_type\" = 'adjustment' and \"entitlement_transactions\".\"quantity\" != 0)\n      )"
+        },
+        "entitlement_transactions_balance_check": {
+          "name": "entitlement_transactions_balance_check",
+          "value": "\"entitlement_transactions\".\"balance_after\" = \"entitlement_transactions\".\"balance_before\" + \"entitlement_transactions\".\"quantity\""
+        }
+      }
+    },
+    "product_entitlements": {
+      "name": "product_entitlements",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entitlement_key": {
+          "name": "entitlement_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entitlement_type": {
+          "name": "entitlement_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "grant_cadence": {
+          "name": "grant_cadence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expiration_policy": {
+          "name": "expiration_policy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "duration_days": {
+          "name": "duration_days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "product_entitlements_product_key_unique": {
+          "name": "product_entitlements_product_key_unique",
+          "columns": [
+            "product_id",
+            "entitlement_key"
+          ],
+          "isUnique": true
+        },
+        "product_entitlements_product_id_idx": {
+          "name": "product_entitlements_product_id_idx",
+          "columns": [
+            "product_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "product_entitlements_product_id_billing_products_id_fk": {
+          "name": "product_entitlements_product_id_billing_products_id_fk",
+          "tableFrom": "product_entitlements",
+          "tableTo": "billing_products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "product_entitlements_type_check": {
+          "name": "product_entitlements_type_check",
+          "value": "\"product_entitlements\".\"entitlement_type\" in ('consumable', 'feature', 'limit')"
+        },
+        "product_entitlements_quantity_check": {
+          "name": "product_entitlements_quantity_check",
+          "value": "(\n        (\"product_entitlements\".\"entitlement_type\" = 'feature' and \"product_entitlements\".\"quantity\" is null)\n        or (\"product_entitlements\".\"entitlement_type\" in ('consumable', 'limit')\n          and \"product_entitlements\".\"quantity\" > 0)\n      )"
+        },
+        "product_entitlements_cadence_check": {
+          "name": "product_entitlements_cadence_check",
+          "value": "\"product_entitlements\".\"grant_cadence\" in ('purchase', 'monthly', 'subscription')"
+        },
+        "product_entitlements_expiration_check": {
+          "name": "product_entitlements_expiration_check",
+          "value": "\"product_entitlements\".\"expiration_policy\" in ('fixed_duration', 'grant_period_end', 'subscription_end')"
+        },
+        "product_entitlements_pattern_check": {
+          "name": "product_entitlements_pattern_check",
+          "value": "(\n        (\"product_entitlements\".\"grant_cadence\" = 'purchase'\n          and \"product_entitlements\".\"expiration_policy\" = 'fixed_duration'\n          and \"product_entitlements\".\"duration_days\" > 0)\n        or (\"product_entitlements\".\"grant_cadence\" = 'monthly'\n          and \"product_entitlements\".\"expiration_policy\" = 'grant_period_end'\n          and \"product_entitlements\".\"duration_days\" is null)\n        or (\"product_entitlements\".\"grant_cadence\" = 'subscription'\n          and \"product_entitlements\".\"expiration_policy\" = 'subscription_end'\n          and \"product_entitlements\".\"duration_days\" is null)\n      )"
+        }
+      }
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "clerk_user_id": {
+          "name": "clerk_user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "primary_email": {
+          "name": "primary_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "email_verified": {
+          "name": "email_verified",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "avatar_url": {
+          "name": "avatar_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "clerk_created_at": {
+          "name": "clerk_created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "clerk_updated_at": {
+          "name": "clerk_updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "last_seen_at": {
+          "name": "last_seen_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "last_login_at": {
+          "name": "last_login_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "users_clerk_user_id_unique": {
+          "name": "users_clerk_user_id_unique",
+          "columns": [
+            "clerk_user_id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

@@ -1,0 +1,30 @@
+# Nuxt
+.nuxt
+.output
+.data
+.nitro
+.cache
+dist
+
+# Dependencies
+node_modules
+.pnpm-store
+
+# Cloudflare Wrangler
+.wrangler
+.dev.vars*
+!.dev.vars.example
+
+# Logs and editor files
+*.log
+.DS_Store
+.idea
+.vscode
+
+# Local code index
+.codegraph
+.playwright-cli
+.env
+.env.*
+!.env.example
+coverage

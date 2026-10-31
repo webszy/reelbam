@@ -1,0 +1,36 @@
+diff --git a/dist/module.js b/dist/module.js
+index efd9a3484045eacef1099587598846cb8f5a40a3..e9079d62c5eb774322772e9f6de94581cb591f39 100644
+--- a/dist/module.js
++++ b/dist/module.js
+@@ -9,7 +9,7 @@ var module_default = defineNuxtModule({
+ 		compatibility: { nuxt: ">=3.0.0" }
+ 	},
+ 	setup(options, nuxt) {
+-		updateRuntimeConfig({
++		const runtimeConfig = {
+ 			public: { clerk: {
+ 				...options,
+ 				publishableKey: options.publishableKey,
+@@ -39,7 +39,21 @@ var module_default = defineNuxtModule({
+ 				apiUrl: void 0,
+ 				apiVersion: void 0
+ 			}
+-		});
++		};
++		nuxt.hook("ready", () => updateRuntimeConfig({
++			...nuxt.options.nitro.runtimeConfig,
++			public: {
++				...nuxt.options.nitro.runtimeConfig.public,
++				clerk: {
++					...nuxt.options.nitro.runtimeConfig.public?.clerk,
++					...runtimeConfig.public.clerk
++				}
++			},
++			clerk: {
++				...nuxt.options.nitro.runtimeConfig.clerk,
++				...runtimeConfig.clerk
++			}
++		}));
+ 		const resolver = createResolver(import.meta.url);
+ 		nuxt.options.build.transpile.push(resolver.resolve("./runtime"));
+ 		nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {};

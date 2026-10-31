@@ -1,0 +1,49 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "reelbam-video-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "vars": {
+    "APP_ENVIRONMENT": "development"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "nuxt-saas-starter-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../../drizzle"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "VIDEO_BUCKET",
+      "bucket_name": "reelbam-video-output"
+    }
+  ],
+  "queues": {
+    "producers": [
+      { "binding": "VIDEO_QUEUE", "queue": "reelbam-video-jobs" }
+    ],
+    "consumers": [
+      {
+        "queue": "reelbam-video-jobs",
+        "max_batch_size": 5,
+        "max_batch_timeout": 1,
+        "max_retries": 3,
+        "dead_letter_queue": "reelbam-video-jobs-dlq"
+      },
+      {
+        "queue": "reelbam-video-jobs-dlq",
+        "max_batch_size": 5,
+        "max_batch_timeout": 1,
+        "max_retries": 1
+      }
+    ]
+  },
+  "triggers": {
+    "crons": ["*/1 * * * *"]
+  }
+}

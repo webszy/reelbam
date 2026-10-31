@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.video.json",
+  "compilerOptions": { "types": ["node"] },
+  "include": ["src/**/*.ts", "../../packages/**/*.ts"]
+}

@@ -1,0 +1,7 @@
+-- Copy to a local SQL file and replace each ID with your own Creem product.
+-- Keep TEST and LIVE product mappings in separate databases/environments.
+-- Product prices must match shared/billing-catalog.ts (minor units, USD).
+UPDATE billing_prices SET provider_product_id = 'YOUR_CREEM_PRODUCT_5', active = 1 WHERE code = 'credit_pack_5_usd';
+UPDATE billing_prices SET provider_product_id = 'YOUR_CREEM_PRODUCT_10', active = 1 WHERE code = 'credit_pack_10_usd';
+UPDATE billing_prices SET provider_product_id = 'YOUR_CREEM_PRODUCT_30', active = 1 WHERE code = 'credit_pack_30_usd';
+UPDATE billing_products SET active = 1 WHERE code IN ('credit_pack_5', 'credit_pack_10', 'credit_pack_30');

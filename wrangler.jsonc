@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "nuxt-saas-starter",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2026-07-28",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".output/public"
+  },
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.01
+    }
+  },
+  "vars": {
+    "APP_ENVIRONMENT": "development",
+    "APP_URL": "http://localhost:3000",
+    "NUXT_PUBLIC_SITE_URL": "http://localhost:3000",
+    "NUXT_CREEM_PAYMENT_ENABLED": "false",
+    "NUXT_PUBLIC_CREEM_PAYMENT_ENABLED": "false"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "nuxt-saas-starter-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "drizzle"
+    }
+  ]
+}

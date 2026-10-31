@@ -1,0 +1,10 @@
+{
+  "name": "@reelbam/video-contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/public.ts",
+    "./internal": "./src/internal.ts"
+  }
+}

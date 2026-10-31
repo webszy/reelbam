@@ -1,0 +1,16 @@
+{
+  "name": "@reelbam/data",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./client": "./src/client.ts",
+    "./credits/contract": "./src/credits/contract.ts"
+  },
+  "dependencies": {
+    "@reelbam/video-contracts": "workspace:*",
+    "drizzle-orm": "0.45.2"
+  }
+}
