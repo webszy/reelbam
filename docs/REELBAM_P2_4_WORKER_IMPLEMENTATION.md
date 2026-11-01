@@ -1,256 +1,168 @@
 # Reelbam P2.4 — 异步生成任务引擎
 
-状态：内部服务、Outbox、独立 Video Worker 和 Mock 闭环已写入。下面列出的测试已实际执行。没有公开生成 API，没有真实 Provider，没有部署，没有远端迁移。完成后停止，等待 GPT Review，不进入 P2.5。
+状态：2026-10-31 独立 Review 后的修复已完成，本地回归通过，等待复审。原始 Review 保留在 `docs/reviews/P2.4_REVIEW.md`；修复与验证见 `docs/reviews/P2.4_FIX_VALIDATION.md`。不自动进入 P2.5。
 
-P2.3 的 `prepareConsumeCharge` / `commitConsumePlan` 可以把 generation 插入和 outbox 插入放进同一次 `database.batch`。失败终态继续调用 `returnCreditsForFailedGeneration`。P2.3 没有成功落账写入器。本阶段按结算设计第 11 节补了 `insertOutputAndSucceed`：它只登记资产并把 `storing` 收到 `succeeded`，不改 grant、不写返还流水。
+本阶段只有内部创建服务、D1 Outbox、独立 Video Worker 与 Mock 执行，没有公开生成 API、真实 Provider、真实支付或部署。根 Nuxt、Clerk/Creem 开关及公开预览隔离保留。
 
-## 1. 创建任务和 Outbox 的事务边界
+## 1. 创建与唯一账本
 
-入口：`server/services/video/create-generation.ts` 的 `createGeneration`。没有 HTTP 路由。
+入口是 `server/services/video/create-generation.ts`，没有 HTTP 路由。
 
-调用方传入已经可信的 `userId`、幂等键、未信任的输入对象、服务端报价和截止时间。函数不接受客户端指定的 Provider 地址、API Key、扣费金额、任务状态或余额。报价只接受 `parseCreditQuoteSnapshot` 的五字段快照。模型、能力和路线由传入的 `ModelRegistry` / `ProviderRegistry` 决定，结果冻结进 `route_snapshot`。
+可信服务端传入 userId、幂等 key、未知输入、服务端报价、时间和 deadline。输入经纯结构校验与规范化后，先查 `(userId,idempotencyKey)`：
 
-同一个 `database.batch` 的顺序：
+- 相同 hash 返回原 generation，不依赖当前路由、价格、素材 availability 或新 deadline。
+- 不同合法输入返回 `idempotency_conflict`。
+- 只有新任务才检查当前模型/路由、价格、输入素材归属与可用状态。
 
-1. `composeBefore`：插入 `video_generations`，`status = queued`，`status_version = 1`。
-2. P2.3 消费围栏、grant `CASE`、consume 流水、consume operation、close-check。
-3. `composeAfter`：插入 `video_outbox`，事件 `start_submission`，`delivery_status = pending`。
+同一次 D1 `database.batch`：
 
-任一语句失败，整批回滚。余额不足在开批之前返回，不留 generation、operation 或 outbox。Outbox 插入失败同样回滚扣费。相同 `userId + idempotencyKey` 且规范化输入哈希相同，返回原任务，不再扣费。哈希不同返回 `idempotency_conflict`。唯一约束冲突或 `LedgerCommitUnknown` 会按幂等键重读，不会换一个新任务再扣一次。
+1. generation INSERT，包含 route/price snapshot，状态 queued。
+2. P2.3 的 generation/余额围栏、grant 扣减、entitlement transactions。
+3. consume operation 和关闭校验。
+4. 首条 start_submission Outbox INSERT。
 
-`canonicalizeGenerationInput` 只含模型、模式、参数和资产 ID。签名 URL、随机数和当时的默认 Provider 不进入哈希。
+任一语句失败全部回滚。没有独立永久扣费再创建任务的窗口。提交响应丢失依靠原 operation 和业务 key 回读，不换 key 重扣。两个不同 key 争用余额时，败者整批回滚。
 
-Queue `send` 在这次提交之后。发送失败只把 outbox 留在 `pending`。创建结果仍然是已排队任务。
+失败继续使用 P2.3 的 `returnCreditsForFailedGeneration`，不另建积分系统。失败事实、终态、返还、到期作废和现金退款 shortfall 补收仍在同一个账本 batch。成功只登记资产和 succeeded，不返还。
 
-## 2. Queue、DLQ 和消息
+## 2. Submit、恢复与合法状态
 
-资源名：
+`step_id=generate`，稳定 submit key 为 `video_submit:{generationId}:generate:{attemptNumber}`。
 
-| 资源 | 名称 |
+首次领取在同一 batch 中创建 attempt 并 queued→submitting。已有未提交 attempt 的 queued 恢复也必须先完成 fenced queued→submitting。dispatch_started 和原 submittedAt 在外部调用前持久化。
+
+| 结果 | 处理 |
 | --- | --- |
-| 主队列 | `reelbam-video-jobs` |
-| DLQ | `reelbam-video-jobs-dlq` |
+| accepted | attempt 的 request ID/metadata、合法 generation→processing、首条 Poll Outbox、原步骤交付和释放租约同批提交。 |
+| rejected，明确不存在上游任务 | 永久失败同批返还；可重试拒绝先原子关闭旧 attempt、保存不存在证据、置 queued 并写新 start 事件。下一次领取才创建新 attempt。 |
+| unknown / ProviderError | 保留 dispatch_started 或 unknown，仅 recover；不退款、不换 Provider、不盲目 Submit。 |
+| 未预期中断 | dispatch_started 留在 D1，租约到期后恢复同一 attempt。 |
 
-DLQ consumer 没有自己的 dead letter queue，避免循环。Video Worker 用 `batch.queue` 区分两条队列。无法识别的队列只 ack，不改任务。
+恢复确认不存在时，不预先建立一条可以在 queued 状态调用 Submit 的新 attempt。提交预算最多 3 次；最后一次确认不存在后，通过合法 needs_review→failed 结算一次。
 
-消息只有：
+Mock 的 projectSubmission 是本地确定性身份重建，不是第二次 Submit。真实 adapter 不具备对应能力时进入 needs_review；Mock 验证不代表真实 Provider 计费幂等。
 
-```json
-{
-  "messageVersion": 1,
-  "eventId": "<outbox id>",
-  "generationId": "<id>",
-  "eventType": "start_submission | poll_status | store_output",
-  "stepId": "generate",
-  "attemptId": "<id 或 null>"
-}
-```
+Poll 只查询已有 request ID。调用异常和 pending 消耗独立、持久化的 poll 预算，不消耗 submit 预算。recover 也有独立查询计数。默认每类最多 20 次；次数在外部 I/O 前保留，进程中断不会重置预算。延迟按 1、2、4…秒增长，最多 300 秒。
 
-没有余额、价格、密钥或任务状态。Consumer 读 D1。Outbox payload 是同一份指针。
+remote output 不下载，进入 `remote_output_unsupported` 待审。本阶段未实现真实下载、SSRF、重定向或远程流限额防护。
 
-投递：
+## 3. CAS、Lease 与结算防线
 
-- Dispatcher 先领取 outbox，再 `send`。
-- 发送失败：释放为 `pending`，写 `queue_send_failed`，稍后重发。
-- 发送成功：释放领取并写 `next_retry_at`，不把“已发送”当成业务完成。Consumer 在步骤落库时才把该行标成 `delivered`。
-- 发送成功但释放更新中断：行保持 `leased`。租约到期后可以再发。Consumer 按 D1 状态幂等。
-- 领取者崩溃：`lease_until` 过后其他执行者回收。
+业务状态推进调用纯状态机的合法事件，不能把任意 from/to 字符串解释为许可。SQL 同时检查：
 
-生产用的根 `wrangler.jsonc` 没有 queue 或 R2。Nuxt 的 producer 只写在 `wrangler.video-local.jsonc`，给显式的本地全模式使用。`nuxt.config.ts` 仍指向 `./wrangler.jsonc`。
+- generation owner、当前状态和 status_version。
+- 当前 step 最新 attempt。
+- attempt ID、lease owner/token、实时 lease_until。
+- 事件对应的 accepted/request ID 或确认不存在证据。
 
-## 3. Video Worker
+外部 I/O 返回后重新读取时钟；不会因为拿到当前新 version 而授权旧执行者写入。accepted 保存和推进同批，迟到 accepted 不能让 storing 回到 processing。
 
-目录 `workers/video-worker/`：
+失败围栏仍由 P2.3 执行。queued deadline 返还额外在结算 SQL 内排除任何未解决的 dispatch_started、unknown 或 accepted，即使历史行被错误标成 queued，也不能直接退款。
 
-| 文件 | 作用 |
-| --- | --- |
-| `src/index.ts` | queue、scheduled、以及一律 404 的 fetch |
-| `src/queue.ts` | 按队列名分发，DLQ 不直接判失败 |
-| `src/maintenance.ts` | 调用数据层定时恢复 |
-| `src/generation-runner.ts` | 装配 D1、R2、Mock registry |
-| `src/storage.ts` | R2 `put` / `head` / `delete` |
-| `src/bindings.ts` | binding 形状 |
-| `src/catalog.ts` | 仅 development/test 的 Mock 模型 |
-| `src/fixture.ts` | 合成测试视频字节 |
-| `wrangler.jsonc` | consumer、DLQ、D1、R2、cron |
+成功资产 INSERT、storing→succeeded、store_output 交付同批，检查最新 attempt 与 attempt/outbox 两个租约。终态没有出向事件。
 
-Worker 不导入 Clerk、Creem、Nuxt、React 或真实 AI SDK。`APP_ENVIRONMENT=production` 时不构造 Mock，也不调用 Provider。`pnpm build` / `pnpm deploy` 不引用这个 Worker。
+运营性的 deadline/预算耗尽可以只按 generation version 停到 needs_review；这条路径不返还，也不调用 Provider。需要当前执行者结果的推进必须持有 attempt lease。
 
-执行逻辑在 `packages/data/src/video/`，这样 SQLite 测试不需要启动 Worker 进程。
+`claimAttempt` 会回读真实 token，不再将 UPDATE 0 行当作成功。
 
-## 4. Submit、Poll 和恢复
+## 4. Outbox 与 Queue
 
-`step_id` 固定为 `generate`。`submit_key` 为 `video_submit:{generationId}:generate:{attemptNumber}`。
+资源：主队列 `reelbam-video-jobs`，DLQ `reelbam-video-jobs-dlq`。主队列配置一个 consumer 和 DLQ，DLQ 配置独立 consumer，避免循环。
 
-顺序：
+消息只包含 v1 指针：eventId、generationId、eventType、stepId、attemptId。Consumer 回读实际 D1 Outbox 与 generation，拒绝不匹配、未知版本或不再需要的事件，不把 Queue 当事实源。
 
-1. 持久化 attempt，`acceptance_status = not_submitted`，并写入租约。
-2. 状态从 `queued` 收到 `submitting`。
-3. 单独提交 `dispatch_started` 和稳定的 `submittedAt`。
-4. 然后才调用 `submit`。
-5. 按结果分类并持久化。
-6. 再安排 poll outbox。Poll 发送失败不再次 submit。
+D1 commit → Queue send → D1 更新不是跨资源事务：
 
-| 结果 | 持久化 | 下一步 |
-| --- | --- | --- |
-| accepted | request id、route 上的 provider、attempt、metadata | 只 poll |
-| rejected 且确认没有上游任务 | `rejected`，request id 为空 | 可重试的限流/超时/不可用会换下一个 attempt；内容策略等直接失败返还 |
-| unknown 或调用抛错 | `submission_unknown` 或保留 `dispatch_started` | `recoverSubmission`，不重新 submit，不退款，不换 Provider |
+- send 失败保留 pending，指数退避。
+- send 成功仍等待步骤持久化完成；dispatcher 释放发送租约并记录重发时间。
+- send 后中断可重复发送；业务 attempt、租约、状态和账本负责幂等。
+- 过期租约回收后立即恢复待发资格。
+- 终态、needs_review、旧 attempt 和已完成阶段的事件，由 D1 当前状态判定后持久化关闭。
+- 单条事件最多 8 次 dispatcher 发送，包括“发送成功却没有业务推进”的情况，不能只限制异常。
+- 非 queued 事件耗尽后进入 needs_review，不退款；queued 的 dead 首事件等 deadline 安全结算，不不断新建事件重置预算。
 
-Mock 在保存 request id 之前中断时，恢复调用 `projectSubmission` 再 `recoverSubmission`。这是对同一 `submissionKey` 的本地投影，不是第二次 `adapter.submit`。真实适配器没有 `projectSubmission` 时进入 `needs_review`。
+Queue batch 逐条 ack/retry；一个失败不主动重试已成功条目。重试使用 30 秒延迟，并记录脱敏 generation/attempt/event 标识。DLQ 只回读、补持久事件或待审，不调用 Provider，也不退款。
 
-Poll 返回 pending 只增加 poll 计数并安排下一次查询。网络错误同样不 submit。明确 failed 走 P2.3 返还。超过 poll 预算或无法确认上游时进入 `needs_review`，不退款、不换路线。
+## 5. Deadline、存储与维护公平性
 
-`output.kind = remote` 只进入 `needs_review`（`remote_output_unsupported`）。本阶段不下载外部 URL。
+queued deadline 处理可以在没有 inflight 首事件时补建一个结算领取事件，完全不依赖 Queue send 成功。若存在未确认接单，转 needs_review；账本 SQL 再做同样防线。
 
-Deadline：仍是 `queued` 且没有上游任务时，用 `deadline_reached` 做失败返还。已经 submit 但无法确认上游的状态进入 `needs_review`。`storing` 继续登记输出，不因为截止时间重新生成。
+其他未确认提交/processing 超时进入 needs_review。storing 有独立预算：最多 6 次存储尝试、从 provider_completed 持久化起算 10 分钟。耗尽或超时进入 needs_review，保留对象与审计，不重新 Submit、不直接退款。
 
-## 5. CAS、Lease 和版本
+maintenance 每轮最多检查 20 个任务；检查后轮换调度时间，不能被最旧的无进展任务永久占满。维护只补事件、处理 deadline/停放和 Outbox，不执行 Provider Submit/Poll。
 
-非终态更新把谓词放在 `status_version` 或 `attempt_number` 的 `CASE` 里，失败写成 `-1`，由已有 CHECK 回滚整批。`WHERE` 只有主键。
+## 6. R2、Fixture 和对象保留
 
-Attempt 和 outbox 使用 `lease_owner`、`lease_token`、`lease_until`。新执行者只能在租约为空或已过期时领取。旧 token 的后续写入会触发 `-1`。
+fixture 为自行生成的 1 秒、160×90 H.264 色块视频，1932 字节，无第三方素材。生成命令见 `workers/video-worker/fixtures/README.md`。
 
-终态：
+固定 SHA-256：
 
-- 失败：`returnCreditsForFailedGeneration`。证据更新放在 `composeBefore`，和失败状态、返还流水同一批。`unknown` 不能走这条路径。
-- 成功：`insertOutputAndSucceed`。资产插入、`storing + output_stored`、`store_output` 交付在同一批。不调用积分计划。
+`665cc61f99b795554a96a73f9b7e3a6c61c91874501111f6c1d874076f6c4e29`
 
-`succeeded` 和 `failed` 没有出向事件。迟到失败消息在读到终态后直接 ack。
-
-## 6. R2 输出
-
-合成文件：`workers/video-worker/fixtures/mock-video-v1.mp4`。53 字节，自行构造的 `ftyp/mdat`，fixture id 为 `reelbam/mock-video-v1`。不是 ShrimpReel 素材。
+运行时嵌入字节与文件一致，测试检查 hash、视频轨道、FFmpeg 解码及本地 R2 读回。
 
 对象键：
 
-- 临时：`private/{env}/generations/{id}/attempts/{attemptId}/tmp/{leaseToken}.mp4`
-- 最终：`private/{env}/generations/{id}/attempts/{attemptId}/output.mp4`
+`private/{env}/generations/{generationId}/attempts/{attemptId}/outputs/{sha256}/output.mp4`
 
-要求 `video/mp4`，大小大于 0 且不超过 5_000_000。`head` 必须和 fixture 字节数一致。D1 资产 id 为 `asset_{generationId}_{attemptId}`，状态 `available`，哈希 sha256。没有公开 URL。
+不再为新写入创建临时拷贝。R2 put 使用只创建条件和 SHA-256 校验；既存对象不能被旧执行者覆盖。head 同时核对长度、MIME 和 R2 保存的 checksum。
 
-R2 成功而 D1 失败时，对象留在最终键上。重试只登记资产，不调用 Provider。两个 Worker 抢同一资产 id 时，只有持有当前 attempt 租约和 `store_output` 租约的批次能把 generation 收成 `succeeded`。失败者的临时键只有在 `video_assets` 没有引用时才删除。
+R2 put 成功而 D1 登记失败后保持 storing，后续用同一不可变对象重试登记，不调用 Provider。真实本地 workerd 销毁/重启后已验证该路径，Queue 内存可以丢失。
 
-Mock 成本写入 `video_provider_costs`：`actual`、`amount_micros = 0`、`currency = USD`、`source = mock`。未知成本仍是 `unknown` 且金额为 NULL，不会写成 0。积分消费仍在 `entitlement_transactions`。
+终态 generation 满 24 小时后，清理该 generation/attempt 前缀下超过 24 小时的无引用对象，包括旧版本 tmp。每轮有界分页，cursor/检查时间保存在 attempt metadata，合并更新不会替换 Provider 信息。任何 video_assets 已引用对象都保留；needs_review 和仍执行中的输出保留供恢复/核查，不自动清理。
 
-## 7. 定时恢复
+不存永久公共 URL。远端 bucket 的实际权限、公开域名和真实部署未检查。
 
-`runMaintenance` 每次最多 20 行：
+## 7. 成本、类型与观测
 
-- 回收过期 outbox 租约。
-- 补发到期的 pending outbox。
-- 为 `processing` / `submission_unknown` 补 poll，为 `storing` 补 `store_output`，为仍需启动的任务补 `start_submission`。
-- `queued` 且已过 deadline：走失败返还。
-- 其他非 storing 状态已过 deadline：`needs_review`，不调用 Provider，不退款。
+Mock 成本为 actual、0 USD、source=mock，与用户积分消费分开。unknown 金额/币种保持 NULL；同 attempt/kind 和账单唯一约束继续生效。
 
-维护本身不 submit、不 poll Provider、不退款，除了上面这条已经允许的 queued deadline 结算。
+独立 Worker 启用 observability 和 traces，错误日志不输出 Provider 原始错误、密钥或签名 URL。
 
-DLQ 只根据 D1 做 `ignore`、补一条 outbox，或 `needs_review`。它不调用 Provider，不退款，不覆盖 `succeeded`，也不把旧 attempt 写成新 attempt 的失败。
+`typecheck:video` 不依赖 .nuxt。数据库测试通过 H3 的实际类型声明 Nitro 边界；H3 和 ESLint 已以现有锁定版本加入直接开发依赖，未升级其他依赖。新增 `typecheck:video-bindings` 通过 Wrangler 生成临时声明并验证实际 Env 与 queue/scheduled/fetch handler 兼容。该检查发现并修正了 Queue.send 返回值不能假定为 void 的类型偏差。
 
-## 8. 本地命令
+## 8. 本地验证
 
-Wrangler `4.114.0`。Miniflare `4.20260722.0` 随 Wrangler 安装。
+本轮已执行：
 
-```sh
-pnpm run test:video-engine
-pnpm run video:local:init
-pnpm run video:worker:dev
-pnpm run video:dev
-```
-
-`video:local:init` 只执行 `wrangler d1 migrations apply DB --local`，并且拒绝参数里的 `remote`。持久化目录是 `.wrangler/state/video-local`。Web 配置和 Video Worker 使用同一个 D1 名 `nuxt-saas-starter-db`、同一个 R2 名 `reelbam-video-output`、同一个主队列名。
-
-本地限制：
-
-- Queue 在单个 Miniflare 会话的内存里。两个分开的 `wrangler dev` 进程即使 `--persist-to` 相同，也只共享 D1/R2 文件，不共享队列。
-- 要让 Nuxt producer 和 Video consumer 互相投递，需要同一次 `pnpm run video:dev`（重复 `--config`）。本次没有启动这个长进程。
-- 本地 consumer 并发不等于生产的多 isolate。两个 consumer 抢同一任务是在同一个 SQLite 连接上测试的。
-- `video:dev` 依赖已经构建的 `.output/server/index.mjs`。它不是 `nuxt build` 或静态预览的依赖。
-
-测试身份只出现在 `packages/data/test` 和 Worker 的 development catalog。没有公开假登录或充值路由。
-
-## 9. 已执行的测试
+| 检查 | 结果 |
+| --- | --- |
+| 纯核心 | 21/21 PASS |
+| 数据层，含账本/恢复故障 | 127/127 PASS |
+| 原站点单元测试 | 151/151 PASS |
+| Worker/Queue/Fixture | 5/5 PASS |
+| 独立视频与 Worker 类型检查 | PASS |
+| 生成 Wrangler binding/handler 类型检查 | PASS |
+| Nuxt typecheck/build | PASS |
+| lint | 0 errors，首页既有 v-html warning 1 条 |
+| drizzle-kit check | PASS，无新增/修改迁移 |
+| Public Preview 浏览器 | 无 D1/R2/Queue 可访问，表单只本地校验，登录/购买关闭 |
 
 命令：
 
 ```sh
-node --experimental-transform-types --import ./scripts/alias-register.mjs --test \
-  packages/data/test/video-engine.sqlite.test.ts \
-  workers/video-worker/test/queue-roundtrip.test.mjs
+pnpm run test:video
+pnpm run test:data
+pnpm run test:unit
+pnpm run test:video-engine
+pnpm run test:video-fixture
+pnpm run typecheck:video
+pnpm run typecheck:video-bindings
+pnpm exec tsc --project workers/video-worker/tsconfig.json
+pnpm run typecheck
+pnpm run lint
+pnpm run build
+pnpm run db:check
 ```
 
-结果：24 个测试，24 通过，约 1.2 秒。数据库是临时 SQLite，应用了仓库里的迁移文件，并检查了 generation、operation、outbox、attempt、asset、cost、余额和 settlement 行。
+原来的 router 夹具失败、Creem 旧 batch 次数断言、24 个独立类型错误已修复。数据层和 Worker 测试都操作临时本地资源。具体日志与剩余验证限制见修复报告。
 
-| 编号 | 结果 |
-| --- | --- |
-| T01 原子创建、扣费、outbox，并跑通 Mock 成功 | 通过 |
-| T02 余额不足无残留 | 通过 |
-| outbox 插入失败回滚扣费 | 通过 |
-| T03 相同幂等键不重复扣费 | 通过 |
-| T04 同键不同输入冲突 | 通过 |
-| T05 发送失败后 outbox 保留并可再发 | 通过 |
-| T06 发送成功但更新中断，重复消息只 submit 一次 | 通过 |
-| T07 两个 consumer 只有一个 submit | 通过 |
-| T08 过期租约可接管，旧 token 不能改 request id | 通过 |
-| T09 Mock 已接单但 request id 未保存，恢复到同一个 job id | 通过 |
-| T10 poll 发送失败不再 submit | 通过 |
-| T11 pending 轮询不增加 submit | 通过 |
-| T12 明确失败只返还一次 | 通过 |
-| T13 `submission_unknown` 不退款、不第二次 submit | 通过 |
-| T14 成功后的迟到失败不改变终态 | 通过 |
-| T15 R2 已写入、D1 完成失败，重试不重新生成 | 通过 |
-| T16 重复登记只留一个最终资产 | 通过 |
-| T17 DLQ 不退款、不 submit | 通过 |
-| T18 新的 runner 对象能继续崩溃任务 | 通过 |
-| T19 默认路线改变后旧快照仍用原 Provider | 通过 |
-| T20 Mock 成本 0 USD，积分流水仍是消费 6 | 通过 |
-| T21 全额现金退款后的生成失败，shortfall 不变、可消费为 0、只返还一次 | 通过 |
-| T22 `app/` 与 `server/api/` 不引用创建服务、Worker 或 `/api/video`；根 wrangler 无 queue/R2 | 通过 |
-| Miniflare producer → consumer，消息写入共享 D1 | 通过 |
+本地 Queues 不支持真实多 isolate consumer concurrency。本轮没有 Cloudflare 部署/真实 Cron、远端 D1/R2 权限、真实 Provider 或真实支付证据。不以本地成功宣称生产计费幂等。
 
-另外：`packages/video-core/test/*.test.ts` 21 个里 20 个通过。失败的是既有 `router.test.ts`「不存在的模型…」：`setup({ routes: 全部 disabled })` 在返回前自己调用 `select`，于是在断言前抛出 `no_compatible_route`。本阶段没有改 router 或这个夹具。
+## 9. 本地开发与停止点
 
-## 10. 未执行或失败的检查
+`video:local:init` 仍仅应用本地迁移；两个 Worker 共用本地 D1/R2。必须在同一个 `video:dev` Wrangler 会话中连接 producer/consumer，分开的 dev 进程不共享队列内存。该命令需要先有 Nuxt 构建产物。
 
-- `pnpm run test:data`、`pnpm run test:unit`、lint、`nuxt typecheck`、build、浏览器预览。页面没有改，T22 是源码扫描，不是浏览器点击。
-- `tsc --project tsconfig.video.json` 仍有 24 个错误。新增的 video/worker/create 文件不在其中。错误来自既有测试把 `mode` 推成 `string`，以及 `server/api/webhooks/creem.post.ts` 的 Nuxt 全局在这个独立 tsconfig 里不可见。
-- `pnpm run video:local:init` 和 `pnpm run video:dev` 没有执行。没有启动两个长期 Wrangler 进程。
-- 没有应用远端 D1，没有 `wrangler deploy`，没有 git 提交或推送。
-- 没有真实 Provider、真实支付或公开 R2 读取。
-- SQLite batch 通过不等于 Cloudflare D1 实机通过。
+生产根 Wrangler 没有新增 Queue/R2；Nuxt build 不加载 Video Worker。没有公开假登录、免费充值或 mock-generate 路由。
 
-## 11. P2.5 可调用的接口
-
-创建，仅服务端：
-
-```ts
-createGeneration(database, {
-  userId,          // 由 Clerk 会话注入，不要读客户端字段
-  idempotencyKey,
-  input,           // 未知 JSON，函数内部校验
-  quote,           // 服务端价格快照，不是客户端金额
-  nowMs,
-  deadlineAtMs,
-}, { models, providers, queue })
-```
-
-执行：
-
-- `dispatchDueOutbox` / `dispatchOutboxRow`
-- `handleVideoMessage(deps, message, 'queue' | 'dlq')`
-- `runMaintenance`
-- 失败结算继续用 `returnCreditsForFailedGeneration`
-- 成功登记用 `insertOutputAndSucceed`
-
-P2.5 仍需自己加 owner 校验的 HTTP、预览和 Range 下载。不要把 Queue 消息里的字段当成余额或状态。
-
-## 12. 生产 Public Preview 的隔离
-
-- 根 `wrangler.jsonc` 和 `nuxt.config.ts` 的 Wrangler 路径没有改。
-- 首页、模板和市场 Studio 页面没有改，也不会请求视频任务 API。
-- 生成、支付和积分购买入口没有打开。
-- Video Worker 不是静态构建依赖。
-- 公开预览构建不需要 Queue、R2、Clerk 或 Creem 凭据。
-- D1 database id 仍是占位值。支付开关仍是 `false`。
-
-**P2.4 到此停止。不要自动进入 P2.5。**
+**P2.4 修复到此停止，等待复审，不自动进入 P2.5。**

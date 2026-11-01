@@ -1,0 +1,33 @@
+Command: node node_modules/wrangler/bin/wrangler.js dev --local --persist-to /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7 --ip 127.0.0.1 --port 57310 --inspector-port 0 --test-scheduled --show-interactive-dev-session=false --config workers/video-worker/wrangler.jsonc --var APP_ENVIRONMENT:production
+
+ ⛅️ wrangler 4.114.0 (update available 4.156.0)
+───────────────────────────────────────────────
+Your Worker has access to the following bindings:
+Binding                                         Resource                  Mode
+env.VIDEO_QUEUE (reelbam-video-jobs)            Queue                     local
+env.DB (nuxt-saas-starter-db)                   D1 Database               local
+env.VIDEO_BUCKET (reelbam-video-output)         R2 Bucket                 local
+env.APP_ENVIRONMENT ("(hidden)")                Environment Variable      local
+
+Wrangler detected this dev session is running in an AI agent.
+The Local Explorer API is available at http://127.0.0.1:57310/cdn-cgi/explorer/api
+Useful routes:
+  GET http://127.0.0.1:57310/cdn-cgi/explorer/api - OpenAPI schema
+  GET http://127.0.0.1:57310/cdn-cgi/explorer/api/d1/database - D1 databases
+  GET http://127.0.0.1:57310/cdn-cgi/explorer/api/local/workers - local Workers and bindings
+  GET http://127.0.0.1:57310/cdn-cgi/explorer/api/r2/buckets - R2 buckets
+  GET http://127.0.0.1:57310/cdn-cgi/explorer/api/storage/kv/namespaces - KV namespaces
+  GET http://127.0.0.1:57310/cdn-cgi/explorer/api/workers/durable_objects/namespaces - Durable Object namespaces
+  GET http://127.0.0.1:57310/cdn-cgi/explorer/api/workflows - Workflows
+⎔ Starting local server...
+⎔ Connection status updated
+Your Worker has access to the following bindings:
+Binding                                         Resource                  Mode
+env.VIDEO_QUEUE (reelbam-video-jobs)            Queue                     local
+env.DB (nuxt-saas-starter-db)                   D1 Database               local
+env.VIDEO_BUCKET (reelbam-video-output)         R2 Bucket                 local
+env.APP_ENVIRONMENT ("(hidden)")                Environment Variable      local
+
+[wrangler:info] Ready on http://127.0.0.1:57310
+[wrangler:info] GET / 404 Not Found (29ms)
+[wrangler:info] GET /__scheduled 200 OK (12ms)

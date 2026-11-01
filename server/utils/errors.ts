@@ -34,7 +34,7 @@ export class AppError extends Error {
 
 export class CheckoutError extends Error {
   readonly code: CheckoutErrorCode
-  readonly details?: CheckoutProviderDetails
+  readonly details: CheckoutProviderDetails | undefined
 
   constructor(
     code: CheckoutErrorCode,
@@ -70,10 +70,10 @@ function getErrorLogContext(error: unknown): CheckoutErrorDebug {
       /\nparams:[\s\S]*/i,
       '\nparams: [redacted]',
     ),
-    stack: source.stack
-      ?.split('\n')
+    ...(source.stack === undefined ? {} : { stack: source.stack
+      .split('\n')
       .filter(line => /^\s+at\s/.test(line))
-      .join('\n'),
+      .join('\n') }),
   }
 }
 

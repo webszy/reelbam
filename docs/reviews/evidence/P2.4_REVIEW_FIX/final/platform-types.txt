@@ -1,0 +1,75 @@
+Command: corepack pnpm typecheck:video-bindings
+$ node scripts/check-video-bindings.mjs
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mFailed to write to log file Error: EPERM: operation not permitted, open '/Users/walter/Library/Preferences/.wrangler/logs/wrangler-2026-11-01_04-48-50_825.log'[0m
+
+      at async open (node:internal/fs/promises:697:25)
+      at async writeFile (node:internal/fs/promises:1317:14)
+      at async /Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/wrangler-dist/cli.js:59895:7
+      at async Mutex.runWith (/Volumes/Development/Workspace/reelbam/node_modules/.pnpm/miniflare@4.20260722.0/node_modules/miniflare/dist/src/index.js:71895:48)
+      at async appendToDebugLogFile (/Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/wrangler-dist/cli.js:59892:3) {
+    errno: -1,
+    code: 'EPERM',
+    syscall: 'open',
+    path: '/Users/walter/Library/Preferences/.wrangler/logs/wrangler-2026-11-01_04-48-50_825.log'
+  }
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mWould have written: [0m
+
+  --- 2026-11-01T04:48:50.911Z debug
+  🪵  Writing logs to "/Users/walter/Library/Preferences/.wrangler/logs/wrangler-2026-11-01_04-48-50_825.log"
+  ---
+  
+
+
+
+ ⛅️ wrangler 4.114.0
+────────────────────
+Generating project types...
+
+interface __BaseEnv_VideoWorkerBindings {
+	VIDEO_BUCKET: R2Bucket;
+	DB: D1Database;
+	VIDEO_QUEUE: Queue;
+	APP_ENVIRONMENT: string;
+}
+declare namespace Cloudflare {
+	interface GlobalProps {
+		mainModule: typeof import("../../../../../../Volumes/Development/Workspace/reelbam/workers/video-worker/src/index");
+	}
+	interface Env extends __BaseEnv_VideoWorkerBindings {}
+}
+interface VideoWorkerBindings extends __BaseEnv_VideoWorkerBindings {}
+type StringifyValues<EnvType extends Record<string, unknown>> = {
+	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
+};
+declare namespace NodeJS {
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "APP_ENVIRONMENT">> {}
+}
+
+Generating runtime types...
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:2145:21)
+    at listenInCluster (node:net:2224:12)
+    at node:net:2448:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+🪵  Logs were written to "/Users/walter/Library/Preferences/.wrangler/logs/wrangler-2026-11-01_04-48-50_825.log"
+file:///Volumes/Development/Workspace/reelbam/scripts/check-video-bindings.mjs:15
+  if (result.status !== 0) throw new Error('VIDEO_BINDING_CHECK_FAILED:' + result.status)
+                                 ^
+
+Error: VIDEO_BINDING_CHECK_FAILED:1
+    at run (file:///Volumes/Development/Workspace/reelbam/scripts/check-video-bindings.mjs:15:34)
+    at file:///Volumes/Development/Workspace/reelbam/scripts/check-video-bindings.mjs:21:3
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.19.0
+[ELIFECYCLE] Command failed with exit code 1.

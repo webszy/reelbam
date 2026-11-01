@@ -25,9 +25,7 @@ function onSubmit() {
 function onInput(key: string) {
   checked.value = false
   if (errors.value[key]) {
-    const next = { ...errors.value }
-    delete next[key]
-    errors.value = next
+    errors.value = Object.fromEntries(Object.entries(errors.value).filter(([field]) => field !== key))
   }
 }
 

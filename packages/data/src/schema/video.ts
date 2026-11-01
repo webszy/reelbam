@@ -8,8 +8,7 @@ import {
   text,
   uniqueIndex,
 } from 'drizzle-orm/sqlite-core'
-import type { JsonObject, RouteSnapshot } from '@reelbam/video-contracts/internal'
-import type { InternalGenerationStatus } from '@reelbam/video-contracts/internal'
+import type { InternalGenerationStatus, JsonObject, RouteSnapshot } from '@reelbam/video-contracts/internal'
 import type { CreditQuoteSnapshot } from '../credits/contract.ts'
 import {
   billingRefundCreditAdjustments,

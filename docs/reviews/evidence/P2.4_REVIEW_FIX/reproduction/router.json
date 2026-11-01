@@ -1,0 +1,7 @@
+{
+  "command": "corepack pnpm test:video",
+  "status": "FAIL",
+  "exitCode": 1,
+  "durationSeconds": 0.4,
+  "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/reproduction/router.txt"
+}

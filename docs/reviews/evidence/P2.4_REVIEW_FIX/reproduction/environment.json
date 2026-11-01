@@ -1,0 +1,7 @@
+{
+  "command": "node --experimental-transform-types --test workers/video-worker/test/environment.test.ts",
+  "status": "FAIL",
+  "exitCode": 1,
+  "durationSeconds": 0.4,
+  "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/reproduction/environment.txt"
+}

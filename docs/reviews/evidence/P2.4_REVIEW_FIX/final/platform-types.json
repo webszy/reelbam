@@ -1,0 +1,7 @@
+{
+  "command": "corepack pnpm typecheck:video-bindings",
+  "status": "FAIL",
+  "exitCode": 1,
+  "durationSeconds": 0.73,
+  "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/final/platform-types.txt"
+}

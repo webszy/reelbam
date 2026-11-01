@@ -1,0 +1,61 @@
+{
+  "report_lines": 309,
+  "report_characters": 23218,
+  "findings": [
+    [
+      "F01",
+      "P0"
+    ],
+    [
+      "F02",
+      "P1"
+    ],
+    [
+      "F03",
+      "P1"
+    ],
+    [
+      "F04",
+      "P1"
+    ],
+    [
+      "F05",
+      "P1"
+    ],
+    [
+      "F06",
+      "P1"
+    ],
+    [
+      "F07",
+      "P1"
+    ],
+    [
+      "F08",
+      "P1"
+    ],
+    [
+      "F09",
+      "P2"
+    ],
+    [
+      "F10",
+      "P2"
+    ],
+    [
+      "F11",
+      "P2"
+    ]
+  ],
+  "missing_local_links": [],
+  "tracked_changes": [],
+  "staged_changes": [],
+  "new_files": [
+    "docs/reviews/P2.4_REVIEW.md",
+    "docs/reviews/evidence/P2.4_REVIEW_PROBES.ts.txt",
+    "docs/reviews/evidence/P2.4_local-db-list.json",
+    "docs/reviews/evidence/P2.4_local-worker-bindings.json",
+    "docs/reviews/evidence/P2.4_public-preview.jpg",
+    "docs/reviews/evidence/P2.4_purchases-closed.jpg"
+  ]
+}

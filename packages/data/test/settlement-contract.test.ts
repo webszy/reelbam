@@ -322,7 +322,7 @@ describe('输入快照与报价', () => {
   it('规范化输入排除报价和路由，可选参数改变哈希', () => {
     const input = {
       modelId: 'model-a',
-      mode: 'text-to-video',
+      mode: 'text-to-video' as const,
       prompt: 'a cat',
       parameters: { durationSeconds: 5, resolution: '720p' },
     }

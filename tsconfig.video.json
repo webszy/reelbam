@@ -18,5 +18,5 @@
       "@reelbam/data": ["./packages/data/src/index.ts"]
     }
   },
-  "include": ["packages/**/*.ts", "server/services/video/**/*.ts", "workers/video-worker/src/**/*.ts"]
+  "include": ["packages/*/src/**/*.ts", "server/services/video/**/*.ts", "workers/video-worker/src/**/*.ts"]
 }

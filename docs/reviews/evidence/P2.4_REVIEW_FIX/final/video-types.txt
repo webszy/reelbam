@@ -1,0 +1,2 @@
+Command: corepack pnpm typecheck:video
+$ tsc --project tsconfig.video.json && tsc --project tsconfig.video-tests.json

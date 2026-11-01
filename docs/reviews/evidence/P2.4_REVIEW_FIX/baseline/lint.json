@@ -1,0 +1,7 @@
+{
+  "command": "corepack pnpm lint",
+  "status": "PASS",
+  "exitCode": 0,
+  "durationSeconds": 2.62,
+  "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/baseline/lint.txt"
+}

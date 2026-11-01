@@ -1,0 +1,79 @@
+Command: node node_modules/wrangler/bin/wrangler.js d1 migrations apply DB --local --config wrangler.video-local.jsonc --persist-to /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7
+
+ ⛅️ wrangler 4.114.0
+────────────────────
+Resource location: local 
+
+Use --remote if you want to access the remote instance.
+
+Migrations to be applied:
+┌──────────────────────────────┐
+│ name                         │
+├──────────────────────────────┤
+│ 0000_fast_magdalene.sql      │
+├──────────────────────────────┤
+│ 0001_video_business.sql      │
+├──────────────────────────────┤
+│ 0002_provider_cost_check.sql │
+├──────────────────────────────┤
+│ 0003_ledger_integrity.sql    │
+└──────────────────────────────┘
+? About to apply 4 migration(s)
+Your database may not be available to serve requests during the migration, continue?
+🤖 Using fallback value in non-interactive context: yes
+🌀 Executing on local database DB (00000000-0000-0000-0000-000000000000) from ../../../../var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7/v3/d1:
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+🚣 55 commands executed successfully.
+┌──────────────────────────────┬────────┐
+│ name                         │ status │
+├──────────────────────────────┼────────┤
+│ 0000_fast_magdalene.sql      │ ✅     │
+├──────────────────────────────┼────────┤
+│ 0001_video_business.sql      │ 🕒️    │
+├──────────────────────────────┼────────┤
+│ 0002_provider_cost_check.sql │ 🕒️    │
+├──────────────────────────────┼────────┤
+│ 0003_ledger_integrity.sql    │ 🕒️    │
+└──────────────────────────────┴────────┘
+🌀 Executing on local database DB (00000000-0000-0000-0000-000000000000) from ../../../../var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7/v3/d1:
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+🚣 31 commands executed successfully.
+┌──────────────────────────────┬────────┐
+│ name                         │ status │
+├──────────────────────────────┼────────┤
+│ 0000_fast_magdalene.sql      │ ✅     │
+├──────────────────────────────┼────────┤
+│ 0001_video_business.sql      │ ✅     │
+├──────────────────────────────┼────────┤
+│ 0002_provider_cost_check.sql │ 🕒️    │
+├──────────────────────────────┼────────┤
+│ 0003_ledger_integrity.sql    │ 🕒️    │
+└──────────────────────────────┴────────┘
+🌀 Executing on local database DB (00000000-0000-0000-0000-000000000000) from ../../../../var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7/v3/d1:
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+🚣 9 commands executed successfully.
+┌──────────────────────────────┬────────┐
+│ name                         │ status │
+├──────────────────────────────┼────────┤
+│ 0000_fast_magdalene.sql      │ ✅     │
+├──────────────────────────────┼────────┤
+│ 0001_video_business.sql      │ ✅     │
+├──────────────────────────────┼────────┤
+│ 0002_provider_cost_check.sql │ ✅     │
+├──────────────────────────────┼────────┤
+│ 0003_ledger_integrity.sql    │ 🕒️    │
+└──────────────────────────────┴────────┘
+🌀 Executing on local database DB (00000000-0000-0000-0000-000000000000) from ../../../../var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7/v3/d1:
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+🚣 14 commands executed successfully.
+┌──────────────────────────────┬────────┐
+│ name                         │ status │
+├──────────────────────────────┼────────┤
+│ 0000_fast_magdalene.sql      │ ✅     │
+├──────────────────────────────┼────────┤
+│ 0001_video_business.sql      │ ✅     │
+├──────────────────────────────┼────────┤
+│ 0002_provider_cost_check.sql │ ✅     │
+├──────────────────────────────┼────────┤
+│ 0003_ledger_integrity.sql    │ ✅     │
+└──────────────────────────────┴────────┘

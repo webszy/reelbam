@@ -5,25 +5,30 @@ export type GenerationEvent =
   | 'submission_call_failed' | 'recovered_accepted' | 'recovery_confirmed_absent' | 'recovery_unavailable'
   | 'provider_pending' | 'provider_completed' | 'provider_failed' | 'poll_call_failed'
   | 'output_stored' | 'storage_call_failed' | 'storage_irrecoverable' | 'deadline_reached'
+  | 'submission_retry' | 'execution_blocked'
 
 const TRANSITIONS: Readonly<Record<InternalGenerationStatus, Partial<Record<GenerationEvent, InternalGenerationStatus>>>> = {
-  queued: { start_submission: 'submitting', deadline_reached: 'failed' },
+  queued: { start_submission: 'submitting', deadline_reached: 'failed', execution_blocked: 'needs_review' },
   submitting: {
     submission_accepted: 'processing', submission_rejected: 'failed',
     submission_unknown: 'submission_unknown', submission_call_failed: 'submission_unknown',
     deadline_reached: 'needs_review',
+    submission_retry: 'queued', execution_blocked: 'needs_review',
   },
   submission_unknown: {
     recovered_accepted: 'processing', recovery_confirmed_absent: 'queued',
     recovery_unavailable: 'submission_unknown', deadline_reached: 'needs_review',
+    execution_blocked: 'needs_review',
   },
   processing: {
     provider_pending: 'processing', poll_call_failed: 'processing',
     provider_completed: 'storing', provider_failed: 'failed', deadline_reached: 'needs_review',
+    execution_blocked: 'needs_review',
   },
   storing: {
     output_stored: 'succeeded', storage_call_failed: 'storing',
     storage_irrecoverable: 'failed', deadline_reached: 'needs_review',
+    execution_blocked: 'needs_review',
   },
   needs_review: {
     recovered_accepted: 'processing', recovery_confirmed_absent: 'failed',

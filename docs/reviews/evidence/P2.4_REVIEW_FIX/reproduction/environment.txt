@@ -1,0 +1,243 @@
+Command: node --experimental-transform-types --test workers/video-worker/test/environment.test.ts
+(node:82493) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ Worker rejects APP_ENVIRONMENT=undefined before accessing bindings (1.789458ms)
+✖ Worker rejects APP_ENVIRONMENT="" before accessing bindings (0.204708ms)
+✖ Worker rejects APP_ENVIRONMENT=" " before accessing bindings (0.098125ms)
+✖ Worker rejects APP_ENVIRONMENT="staging" before accessing bindings (0.085834ms)
+✖ Worker rejects APP_ENVIRONMENT="Production" before accessing bindings (0.090541ms)
+✖ Worker rejects APP_ENVIRONMENT="development " before accessing bindings (0.067916ms)
+✖ Worker rejects APP_ENVIRONMENT="dev" before accessing bindings (0.067667ms)
+✔ Worker enables Mock only in development/test and registers no production fallback (6.715958ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 1
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 348.309917
+
+✖ failing tests:
+
+test at workers/video-worker/test/environment.test.ts:13:3
+✖ Worker rejects APP_ENVIRONMENT=undefined before accessing bindings (1.789458ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /INVALID_APP_ENVIRONMENT/. Input:
+  
+  'Error: DB_ACCESSED_BEFORE_VALIDATION'
+  
+      at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: DB_ACCESSED_BEFORE_VALIDATION
+        at Object.get DB (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:16:46)
+        at engineDeps (/Volumes/Development/Workspace/reelbam/workers/video-worker/src/generation-runner.ts:15:34)
+        at <anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1382:25)
+        at Test.start (node:internal/test_runner/test:1242:17)
+        at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17),
+    expected: /INVALID_APP_ENVIRONMENT/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at workers/video-worker/test/environment.test.ts:13:3
+✖ Worker rejects APP_ENVIRONMENT="" before accessing bindings (0.204708ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /INVALID_APP_ENVIRONMENT/. Input:
+  
+  'Error: DB_ACCESSED_BEFORE_VALIDATION'
+  
+      at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: DB_ACCESSED_BEFORE_VALIDATION
+        at Object.get DB (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:16:46)
+        at engineDeps (/Volumes/Development/Workspace/reelbam/workers/video-worker/src/generation-runner.ts:15:34)
+        at <anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1382:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+        at Test.postRun (node:internal/test_runner/test:1522:19),
+    expected: /INVALID_APP_ENVIRONMENT/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at workers/video-worker/test/environment.test.ts:13:3
+✖ Worker rejects APP_ENVIRONMENT=" " before accessing bindings (0.098125ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /INVALID_APP_ENVIRONMENT/. Input:
+  
+  'Error: DB_ACCESSED_BEFORE_VALIDATION'
+  
+      at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: DB_ACCESSED_BEFORE_VALIDATION
+        at Object.get DB (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:16:46)
+        at engineDeps (/Volumes/Development/Workspace/reelbam/workers/video-worker/src/generation-runner.ts:15:34)
+        at <anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1382:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+        at Test.postRun (node:internal/test_runner/test:1522:19),
+    expected: /INVALID_APP_ENVIRONMENT/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at workers/video-worker/test/environment.test.ts:13:3
+✖ Worker rejects APP_ENVIRONMENT="staging" before accessing bindings (0.085834ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /INVALID_APP_ENVIRONMENT/. Input:
+  
+  'Error: DB_ACCESSED_BEFORE_VALIDATION'
+  
+      at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: DB_ACCESSED_BEFORE_VALIDATION
+        at Object.get DB (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:16:46)
+        at engineDeps (/Volumes/Development/Workspace/reelbam/workers/video-worker/src/generation-runner.ts:15:34)
+        at <anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1382:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+        at Test.postRun (node:internal/test_runner/test:1522:19),
+    expected: /INVALID_APP_ENVIRONMENT/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at workers/video-worker/test/environment.test.ts:13:3
+✖ Worker rejects APP_ENVIRONMENT="Production" before accessing bindings (0.090541ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /INVALID_APP_ENVIRONMENT/. Input:
+  
+  'Error: DB_ACCESSED_BEFORE_VALIDATION'
+  
+      at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: DB_ACCESSED_BEFORE_VALIDATION
+        at Object.get DB (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:16:46)
+        at engineDeps (/Volumes/Development/Workspace/reelbam/workers/video-worker/src/generation-runner.ts:15:34)
+        at <anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1382:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+        at Test.postRun (node:internal/test_runner/test:1522:19),
+    expected: /INVALID_APP_ENVIRONMENT/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at workers/video-worker/test/environment.test.ts:13:3
+✖ Worker rejects APP_ENVIRONMENT="development " before accessing bindings (0.067916ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /INVALID_APP_ENVIRONMENT/. Input:
+  
+  'Error: DB_ACCESSED_BEFORE_VALIDATION'
+  
+      at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: DB_ACCESSED_BEFORE_VALIDATION
+        at Object.get DB (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:16:46)
+        at engineDeps (/Volumes/Development/Workspace/reelbam/workers/video-worker/src/generation-runner.ts:15:34)
+        at <anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1382:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+        at Test.postRun (node:internal/test_runner/test:1522:19),
+    expected: /INVALID_APP_ENVIRONMENT/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at workers/video-worker/test/environment.test.ts:13:3
+✖ Worker rejects APP_ENVIRONMENT="dev" before accessing bindings (0.067667ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /INVALID_APP_ENVIRONMENT/. Input:
+  
+  'Error: DB_ACCESSED_BEFORE_VALIDATION'
+  
+      at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: DB_ACCESSED_BEFORE_VALIDATION
+        at Object.get DB (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:16:46)
+        at engineDeps (/Volumes/Development/Workspace/reelbam/workers/video-worker/src/generation-runner.ts:15:34)
+        at <anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/Volumes/Development/Workspace/reelbam/workers/video-worker/test/environment.test.ts:20:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1382:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+        at Test.postRun (node:internal/test_runner/test:1522:19),
+    expected: /INVALID_APP_ENVIRONMENT/,
+    operator: 'throws',
+    diff: 'simple'
+  }

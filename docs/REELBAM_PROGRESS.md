@@ -1,10 +1,10 @@
 # Reelbam 进度
 
-更新日期：2026-10-31（Asia/Shanghai）。当前停止点：**P2.4 异步生成任务引擎已写入，并在本地 SQLite 与一次 Miniflare 队列会话中跑过 Mock 测试。未部署、未推送、未进入 P2.5，等待 GPT Review。**
+更新日期：2026-10-31（Asia/Shanghai）。当前停止点：**P2.4 独立 Review 后修复已完成；账本/恢复故障、实际 workerd 重启与 R2 登记、类型检查、构建和无绑定公开预览回归通过。未部署、未推送、未进入 P2.5，等待复审。**
 
 ## 当前状态
 
-Reelbam 保留根 Nuxt 应用。P2.0 已复制 77 个模板文件并将 package name 改为 reelbam。P2.1 写入了 contracts/core/data 包和纯核心。P2.2 把唯一 Drizzle Schema 移到 `packages/data`，追加视频业务表和 `0001` 迁移文件，并定稿积分结算协议。P2.3 写入了唯一账本上的消费、失败返还和 Creem 发放核对。没有 Video Worker、视频 HTTP API 或 UI。
+Reelbam 保留根 Nuxt 应用。P2.0 已复制 77 个模板文件并将 package name 改为 reelbam。P2.1 写入了 contracts/core/data 包和纯核心。P2.2 把唯一 Drizzle Schema 移到 `packages/data`，追加视频业务表和 `0001` 迁移文件，并定稿积分结算协议。P2.3 写入了唯一账本上的消费、失败返还和 Creem 发放核对。现有独立 Video Worker 与内部创建服务；没有视频 HTTP API 或真实生成 UI。下方早期阶段记录为历史现场。
 
 复制前实际检查：`reelbam/` 只有三份 Phase 1 文档和系统 `.DS_Store`，没有非文档代码冲突。复制使用逐文件排除和独占新建，不覆盖现有文件、不删除目标文件。原有 `.DS_Store` 未处理；三份文档复制时全部保留，之后只主动更新本进度文档。
 
@@ -317,12 +317,36 @@ pnpm run typecheck:video
 
 本轮测试、lint、类型检查、构建和数据库迁移均 **NOT RUN**；未安装依赖、未提交、未推送、未部署。详细字段、迁移前提及复测步骤见 `REELBAM_P2_3_LEDGER_IMPLEMENTATION.md` 的 GPT Review 修复节。CDF 完成门禁为 `INSUFFICIENT_EVIDENCE`，不标记财务验收通过，不进入 P2.4。
 
-## P2.4 异步生成任务引擎
+## P2.4 异步生成任务引擎与 Review 修复
 
-本轮只实现任务创建、Outbox、独立 Video Worker 和 Mock 出片闭环。没有公开生成 API，没有真实 Provider，没有改 Public UI。实现和测试记录见 [REELBAM_P2_4_WORKER_IMPLEMENTATION.md](REELBAM_P2_4_WORKER_IMPLEMENTATION.md)。
+首次实现及其故障由 docs/reviews/P2.4_REVIEW.md 保留，原始结论为 BLOCKED。随后按用户“你来修复”的指令修复 F01–F08，并处理 F09–F11；没有进入 P2.5。
 
-已执行：`packages/data/test/video-engine.sqlite.test.ts` 与 `workers/video-worker/test/queue-roundtrip.test.mjs`，24 通过。`packages/video-core/test` 20 通过、1 个既有 router 夹具失败。`tsc --project tsconfig.video.json` 仍有 24 个既有错误，新增文件不在其中。
+修复内容：原子 accepted/状态/Outbox 协议、所有业务推进的合法事件和实时租约、queued deadline 账本防线、Outbox 收敛及 dead 首事件恢复、持久存储/恢复预算、维护轮换、先查幂等重放、可播放 fixture、不可覆盖 R2 对象和终态无引用对象清理。补齐正式故障回归、实际 workerd 重启、本地 R2/D1 中断恢复和逐条 batch ack 测试。
 
-未执行：`test:data`、`test:unit`、Nuxt lint/typecheck/build、`video:local:init`、`video:dev`、远端迁移、部署、提交。
+已执行：core 21/21、data 127/127、unit 151/151、Worker/Queue/Fixture 5/5；独立视频/Worker 类型检查、生成 Wrangler binding 类型检查、Nuxt typecheck/build、drizzle-kit check 均通过。lint 0 errors，保留首页既有 v-html warning 一条。无 D1/R2/Queue 的浏览器预览和表单校验通过，登录、购买与真实生成仍关闭。
 
-**P2.4 到此停止，等待 GPT Review。不要进入 P2.5。**
+没有新增或修改 drizzle 迁移，没有远端资源操作、真实 Provider/支付、部署、Git 提交或推送。真实多 isolate 并发与 Cloudflare 部署验收仍未执行；本地结果不替代该证据。
+
+详细实现见 [REELBAM_P2_4_WORKER_IMPLEMENTATION.md](REELBAM_P2_4_WORKER_IMPLEMENTATION.md)，修复证据见 [P2.4_FIX_VALIDATION.md](reviews/P2.4_FIX_VALIDATION.md)。
+
+**P2.4 修复到此停止，等待复审，不自动进入 P2.5。**
+
+## P2.4 Review Fix 复测（2026-11-01，Asia/Shanghai）
+
+审查输入为 `main@455841c38d8a8156a5b0b2e6e2940a5d7a9ec2f5` 加进入本轮时已有的 46 个修改/未跟踪文件，保留此前修复及历史验证记录。本轮未将旧的 FAIL 或 NOT RUN 改写成通过。
+
+新增最小修复：Router fixture 延迟选择并缓存 Snapshot/adapter，全禁用 Route 的异常回到断言阶段；Worker 业务依赖初始化显式校验 development/test/production，非法值不再回退 development。生产与测试 TypeScript 项目分开严格执行，测试用 H3 globals 不进入纯生产源码检查。
+
+补充 unknown → needs_review 后无伪造失败证据/无退款的 R23；实际 workerd 重启测试改用 Worker scheduled 入口恢复，并新增非法环境与 production 禁止执行已保存 Mock 路线的运行时回归。
+
+本轮实际执行（Node v24.19.0、Corepack pnpm **11.24.0**）：frozen install PASS，锁文件相对本轮开始未变；Core **21/21**、data **128/128**、unit **151/151**、video-engine **60/60**。去重为 **314 项测试通过**，无失败/跳过。独立生产/测试/Worker 类型、生成 binding/handler 类型、Nuxt typecheck/build、lint、db:check 全部 PASS；lint 保留既有 v-html warning 1 条。
+
+默认沙箱首次阻止 Miniflare/Wrangler 的本地监听，保留 BLOCKED 证据，使用本地监听权限复跑通过；dry-run 默认日志路径不可写时也保留原输出，改用临时可写日志目录复跑通过。没有跳过关键验证后标记成功。
+
+当前 fixture 已为此前生成的 1932 字节自制 MP4，本轮实测 H.264、160×90、10 帧、1 秒、FFmpeg 解码通过，运行时/R2/hash 一致。源 Wrangler 配置的双 Worker 与独立 Worker 本地启动通过；四份迁移仅应用于新建临时 D1；scheduled、非法环境和 production 检查通过，dev 进程均已停止。Nuxt 和 Video Worker **两次最终 dry-run 均 PASS**，根公开预览配置仍无 Queue/R2。
+
+验收结论 **PASS（P2.4 本地范围）**。远端 D1、线上多 isolate 并发、真实 Provider/支付、Clerk 登录端到端仍 NOT RUN，不能据本轮结果宣称生产已验收。6 秒模板与 5 秒能力差异交由 P2.5 的 Compiler/模型绑定解决；needs_review 人工处理和真实环境验收仍是正式收费生成前置条件。
+
+完整变更、问题根因、覆盖矩阵、命令/原始证据、剩余事项及迁移前核对方案见 [REELBAM_P2_4_REVIEW_FIX.md](REELBAM_P2_4_REVIEW_FIX.md)。没有修改历史迁移或业务财务数据，没有远端资源操作、正式部署、付费调用、Git 提交或推送。
+
+**本轮到此停止，保持 P2.4，不自动进入 P2.5。**

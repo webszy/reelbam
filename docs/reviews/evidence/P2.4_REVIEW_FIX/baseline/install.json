@@ -1,0 +1,7 @@
+{
+  "command": "corepack pnpm install --frozen-lockfile",
+  "status": "PASS",
+  "exitCode": 0,
+  "durationSeconds": 0.24,
+  "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/baseline/install.txt"
+}

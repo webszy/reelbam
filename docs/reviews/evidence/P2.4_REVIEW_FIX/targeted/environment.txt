@@ -1,0 +1,19 @@
+Command: node --experimental-transform-types --test workers/video-worker/test/environment.test.ts
+(node:82571) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Worker rejects APP_ENVIRONMENT=undefined before accessing bindings (0.550833ms)
+✔ Worker rejects APP_ENVIRONMENT="" before accessing bindings (0.070041ms)
+✔ Worker rejects APP_ENVIRONMENT=" " before accessing bindings (0.054834ms)
+✔ Worker rejects APP_ENVIRONMENT="staging" before accessing bindings (0.048917ms)
+✔ Worker rejects APP_ENVIRONMENT="Production" before accessing bindings (0.057209ms)
+✔ Worker rejects APP_ENVIRONMENT="development " before accessing bindings (0.049125ms)
+✔ Worker rejects APP_ENVIRONMENT="dev" before accessing bindings (0.054166ms)
+✔ Worker enables Mock only in development/test and registers no production fallback (9.235916ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 417.434083

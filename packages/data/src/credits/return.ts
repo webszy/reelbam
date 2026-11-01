@@ -585,6 +585,14 @@ function failureStatusStatement(database: Database, plan: PreparedReturn) {
         when ${videoGenerations.userId} = ${plan.userId}
          and ${videoGenerations.status} = ${plan.fromStatus}
          and ${videoGenerations.statusVersion} = ${plan.expectedVersion}
+         and (${plan.event} != 'deadline_reached' or not exists (
+           select 1 from video_attempts unresolved
+           where unresolved.generation_id = ${videoGenerations.id}
+             and (unresolved.acceptance_status in ('accepted', 'unknown')
+               or (unresolved.acceptance_status = 'not_submitted' and
+                 (unresolved.submitted_at is not null
+                   or json_extract(unresolved.recovery_metadata, '$.phase') = 'dispatch_started')))
+         ))
          and (
            (${videoGenerations.status} = 'queued' and ${plan.event} = 'deadline_reached' and ${videoGenerations.deadlineAt} <= ${plan.seconds})
            or (${videoGenerations.status} = 'submitting' and ${plan.event} = 'submission_rejected')

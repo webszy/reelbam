@@ -1,0 +1,39 @@
+Command: corepack pnpm typecheck:video-bindings
+$ node scripts/check-video-bindings.mjs
+
+ ⛅️ wrangler 4.114.0 (update available 4.156.0)
+───────────────────────────────────────────────
+Generating project types...
+
+interface __BaseEnv_VideoWorkerBindings {
+	VIDEO_BUCKET: R2Bucket;
+	DB: D1Database;
+	VIDEO_QUEUE: Queue;
+	APP_ENVIRONMENT: string;
+}
+declare namespace Cloudflare {
+	interface GlobalProps {
+		mainModule: typeof import("../../../../../../Volumes/Development/Workspace/reelbam/workers/video-worker/src/index");
+	}
+	interface Env extends __BaseEnv_VideoWorkerBindings {}
+}
+interface VideoWorkerBindings extends __BaseEnv_VideoWorkerBindings {}
+type StringifyValues<EnvType extends Record<string, unknown>> = {
+	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
+};
+declare namespace NodeJS {
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "APP_ENVIRONMENT">> {}
+}
+
+Generating runtime types...
+
+Runtime types generated.
+
+
+✨ Types written to /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-bindings-iUVWRq/bindings.d.ts
+
+📖 Read about runtime types
+https://developers.cloudflare.com/workers/languages/typescript/#generate-types
+📣 Remember to rerun 'wrangler types' after you change your wrangler.jsonc file.
+
+Video Worker matches the generated Wrangler bindings and handler types.

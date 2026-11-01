@@ -1,4 +1,5 @@
-import { and, asc, eq, inArray, isNull, lte, or } from 'drizzle-orm'
+import { and, asc, desc, eq, inArray, isNull, lte, or, sql } from 'drizzle-orm'
+import type { VideoOutboxEventType } from './protocol.ts'
 import type { Database } from '../client.ts'
 import { users } from '../schema/billing.ts'
 import { videoAssets, videoAttempts, videoGenerations, videoOutbox, videoProviderCosts } from '../schema/video.ts'
@@ -42,6 +43,13 @@ export async function readOutbox(database: Database, outboxId: string) {
   return rows[0] ?? null
 }
 
+export async function readLastOutbox(database: Database, generationId: string, eventType: VideoOutboxEventType) {
+  const rows = await database.select().from(videoOutbox).where(and(
+    eq(videoOutbox.generationId, generationId), eq(videoOutbox.eventType, eventType),
+  )).orderBy(desc(sql`rowid`)).limit(1)
+  return rows[0] ?? null
+}
+
 export async function readInflightOutbox(database: Database, generationId: string, eventType: 'start_submission' | 'poll_status' | 'store_output') {
   const rows = await database.select().from(videoOutbox).where(and(
     eq(videoOutbox.generationId, generationId),
@@ -56,7 +64,7 @@ export async function readDueOutbox(database: Database, now: Date, limit: number
     eq(videoOutbox.deliveryStatus, 'pending'),
     lte(videoOutbox.notBefore, now),
     or(isNull(videoOutbox.nextRetryAt), lte(videoOutbox.nextRetryAt, now)),
-  )).orderBy(asc(videoOutbox.createdAt)).limit(limit)
+  )).orderBy(asc(videoOutbox.updatedAt), asc(videoOutbox.id)).limit(limit)
 }
 
 export async function readExpiredOutboxLeases(database: Database, now: Date, limit: number) {
@@ -69,7 +77,7 @@ export async function readExpiredOutboxLeases(database: Database, now: Date, lim
 export async function readActiveGenerations(database: Database, limit: number) {
   return database.select().from(videoGenerations).where(inArray(videoGenerations.status, [
     'queued', 'submitting', 'submission_unknown', 'processing', 'storing',
-  ])).orderBy(asc(videoGenerations.updatedAt)).limit(limit)
+  ])).orderBy(asc(videoGenerations.updatedAt), asc(videoGenerations.id)).limit(limit)
 }
 
 export async function readCosts(database: Database, attemptId: string) {

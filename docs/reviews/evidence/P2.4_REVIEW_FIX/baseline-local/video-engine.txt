@@ -1,0 +1,74 @@
+Command: corepack pnpm test:video-engine
+$ node --experimental-transform-types --import ./scripts/alias-register.mjs --test packages/data/test/video-engine.sqlite.test.ts workers/video-worker/test/*.test.mjs
+{"event":"video_needs_review","generationId":"gen_6988d30f-3fd1-4ade-a3d1-98ed2f299c99","attemptId":"att_a12db161-3b24-4b27-960b-f7826a44c36b","errorCode":"poll_budget_exhausted"}
+{"event":"video_needs_review","generationId":"gen_cf89691f-8860-443f-a137-a38fef7ee13e","errorCode":"deadline_unconfirmed"}
+{"event":"video_needs_review","generationId":"gen_65ca0936-c83a-469f-8a50-53bb795b0790","attemptId":"att_0a181fa4-8259-4176-b766-09ff20f581d7","errorCode":"storage_budget_exhausted"}
+{"event":"video_needs_review","generationId":"gen_2b552881-3a13-4a36-b12c-bc28584c7612","errorCode":"storage_deadline_exceeded"}
+{"event":"video_needs_review","generationId":"gen_d1bd997d-f37b-4680-84f9-94abfa00d9a0","attemptId":"att_4a896338-363c-424b-a7f8-33c77bfe3e86","errorCode":"recovery_confirmed_absent"}
+(node:82390) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ T01 creates a mock task, charges once, and writes one outbox row (41.386792ms)
+✔ T02 insufficient credits leaves no generation or outbox (19.032042ms)
+✔ outbox insert failure rolls the charge and generation back (16.222ms)
+✔ T03 same idempotency key returns the same task and does not charge again (18.038875ms)
+✔ T04 same key with a different input conflicts (17.51775ms)
+✔ T05 a failed queue send keeps the outbox and a later send does not charge again (27.321792ms)
+✔ T06 a send that is not marked delivered can be sent again without a second submit (31.261375ms)
+✔ T07 two consumers leave one submit (19.859667ms)
+✔ T08 an expired lease can be taken over and the old token cannot write (21.62275ms)
+✔ T09 a crash after mock acceptance recovers the same request id (20.451708ms)
+✔ T10 a failed poll enqueue does not submit again (24.952833ms)
+✔ T11 pending polls do not increment submits (31.498375ms)
+✔ T12 a confirmed provider failure refunds once (25.903917ms)
+✔ T13 submission_unknown does not refund or submit twice (30.384333ms)
+✔ T14 a late failure does not change a succeeded task (26.743666ms)
+✔ T15 an R2 object is registered again without a second submit when D1 completion fails (30.676042ms)
+✔ T16 one final asset wins when two workers store (26.466458ms)
+✔ T17 a dead letter does not refund or submit (26.224666ms)
+✔ T18 a new runner object resumes a crashed task (30.676958ms)
+✔ T19 an old route snapshot stays on its provider after the default route changes (29.993ms)
+✔ T20 mock provider cost is zero and credits stay on the ledger (26.594833ms)
+✔ T21 a cash refund before a late generation failure keeps the clawback (26.125375ms)
+✔ T22 public preview files do not call the generation engine (1.956125ms)
+✔ R01 failed, succeeded and needs_review stop all outbox delivery (88.615166ms)
+✔ R02 replay survives route, quote and deadline changes (17.512042ms)
+✔ R03 expired poll owner cannot advance after takeover or after I/O expiry (44.39725ms)
+✔ R04 accepted, generation edge and poll event commit together; late worker cannot regress storing (21.859209ms)
+✔ R05 recovered absence followed by acceptance and crash never gets deadline refund (23.512958ms)
+✔ R05 ledger itself rejects queued deadline settlement with unresolved dispatch (20.165959ms)
+✔ R06 persistent storage errors exhaust a durable budget, never Submit or refund (37.549875ms)
+✔ R07 a missing attempt never reports a successful claim (14.554292ms)
+✔ R09 dead first event recovers at deadline and settles exactly once (27.522709ms)
+✔ R10 different keys racing for the same credits cannot overspend (18.108ms)
+✔ R11 lost commit response returns the same generation and one charge (18.0825ms)
+✔ R12 storage deadline survives restarts and does not reuse task scan timestamps (24.391083ms)
+✔ R13 exhausted successful sends stop instead of creating an endless outbox loop (24.805541ms)
+✔ R14 a failed accepted batch does not save half of the acceptance protocol (27.150709ms)
+✔ R15 same key replay does not require an input asset to remain available (17.240458ms)
+✔ R16 bounded maintenance rotates past twenty tasks without business progress (74.264417ms)
+✔ R17 exhausted poll delivery stops in needs_review without resetting its budget (23.589834ms)
+✔ R18 an old R2 writer cannot replace the winning output or register after lease takeover (26.466708ms)
+✔ R19 terminal cleanup uses a persisted cursor and protects the referenced asset (26.655208ms)
+✔ R20 repeated authoritative absence reaches one refund after the submission budget (34.147166ms)
+✔ R21 confirmed retryable rejections exhaust only the submit budget (27.690416ms)
+✔ R22 concurrent identical creation keys return one generation and one charge (18.976833ms)
+(node:82391) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ actual Worker recovers R2 put / D1 registration failure across a workerd restart (1844.605709ms)
+(node:82392) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Mock runtime bytes equal a small, hashed MP4 with a video track (0.73925ms)
+✔ Mock fixture decodes to ten H.264 video frames with FFmpeg (66.755333ms)
+{"event":"video_message_failed","source":"queue","generationId":"gen","attemptId":null,"eventId":"bad"}
+(node:82393) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ a failed queue item retries without replaying successful batch items (1.3375ms)
+✔ producer and consumer workers deliver a queue message into shared D1 (379.70525ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2429.8015

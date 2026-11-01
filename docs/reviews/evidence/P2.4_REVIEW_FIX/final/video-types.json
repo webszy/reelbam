@@ -1,0 +1,7 @@
+{
+  "command": "corepack pnpm typecheck:video",
+  "status": "PASS",
+  "exitCode": 0,
+  "durationSeconds": 1.97,
+  "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/final/video-types.txt"
+}

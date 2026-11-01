@@ -1,0 +1,5 @@
+Command: corepack pnpm typecheck
+$ node --env-file-if-exists=.env node_modules/nuxt/bin/nuxt.mjs typecheck
+.env not found. Continuing without it.
+[info] Nuxt Icon server bundle mode is set to `remote`
+[info] Nuxt Icon client bundle consist of `43` icons with `10.40KB`(uncompressed) in size

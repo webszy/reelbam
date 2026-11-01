@@ -1,0 +1,13 @@
+Command: node node_modules/wrangler/bin/wrangler.js deploy --dry-run --config workers/video-worker/wrangler.jsonc --outdir /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-packaging-8qn1xmre/video-dry-run
+
+ ⛅️ wrangler 4.114.0 (update available 4.156.0)
+───────────────────────────────────────────────
+Total Upload: 368.68 KiB / gzip: 70.32 KiB
+Your Worker has access to the following bindings:
+Binding                                         Resource                  
+env.VIDEO_QUEUE (reelbam-video-jobs)            Queue                     
+env.DB (nuxt-saas-starter-db)                   D1 Database               
+env.VIDEO_BUCKET (reelbam-video-output)         R2 Bucket                 
+env.APP_ENVIRONMENT ("development")             Environment Variable      
+
+--dry-run: exiting now.

@@ -1057,8 +1057,8 @@ describe('applyCheckoutCompleted credit fulfillment', () => {
       db.transactions[0]?.idempotencyKey,
       expected.transaction.idempotencyKey,
     )
-    // Pending path: atomic paid+grant+tx batch, then ensure/verify batch.
-    assert.equal(db.batchCalls, 2)
+    // The atomic paid+grant+tx batch is complete; immutable verification only reads.
+    assert.equal(db.batchCalls, 1)
   })
 
   it('rolls back paid transition when a mid-batch entitlement write fails', async () => {

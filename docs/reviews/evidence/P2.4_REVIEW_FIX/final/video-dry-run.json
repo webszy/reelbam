@@ -1,0 +1,7 @@
+{
+  "command": "node node_modules/wrangler/bin/wrangler.js deploy --dry-run --config workers/video-worker/wrangler.jsonc --outdir /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-dry-run-3ix9lpdk/video-dry-run",
+  "status": "PASS",
+  "exitCode": 0,
+  "durationSeconds": 0.45,
+  "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/final/video-dry-run.txt"
+}

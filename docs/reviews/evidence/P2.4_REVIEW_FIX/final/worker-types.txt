@@ -1,0 +1,1 @@
+Command: node node_modules/typescript/bin/tsc --project workers/video-worker/tsconfig.json

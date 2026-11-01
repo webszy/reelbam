@@ -1,0 +1,7 @@
+{
+  "command": "corepack pnpm test:video-engine",
+  "status": "PASS",
+  "exitCode": 0,
+  "durationSeconds": 5.27,
+  "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/final/video-engine.txt"
+}

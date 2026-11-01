@@ -1,0 +1,53 @@
+Command: node node_modules/wrangler/bin/wrangler.js dev --local --persist-to /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7 --ip 127.0.0.1 --port 57278 --inspector-port 0 --test-scheduled --show-interactive-dev-session=false --config workers/video-worker/wrangler.jsonc --var APP_ENVIRONMENT:staging
+
+ ⛅️ wrangler 4.114.0 (update available 4.156.0)
+───────────────────────────────────────────────
+Your Worker has access to the following bindings:
+Binding                                         Resource                  Mode
+env.VIDEO_QUEUE (reelbam-video-jobs)            Queue                     local
+env.DB (nuxt-saas-starter-db)                   D1 Database               local
+env.VIDEO_BUCKET (reelbam-video-output)         R2 Bucket                 local
+env.APP_ENVIRONMENT ("(hidden)")                Environment Variable      local
+
+Wrangler detected this dev session is running in an AI agent.
+The Local Explorer API is available at http://127.0.0.1:57278/cdn-cgi/explorer/api
+Useful routes:
+  GET http://127.0.0.1:57278/cdn-cgi/explorer/api - OpenAPI schema
+  GET http://127.0.0.1:57278/cdn-cgi/explorer/api/d1/database - D1 databases
+  GET http://127.0.0.1:57278/cdn-cgi/explorer/api/local/workers - local Workers and bindings
+  GET http://127.0.0.1:57278/cdn-cgi/explorer/api/r2/buckets - R2 buckets
+  GET http://127.0.0.1:57278/cdn-cgi/explorer/api/storage/kv/namespaces - KV namespaces
+  GET http://127.0.0.1:57278/cdn-cgi/explorer/api/workers/durable_objects/namespaces - Durable Object namespaces
+  GET http://127.0.0.1:57278/cdn-cgi/explorer/api/workflows - Workflows
+⎔ Starting local server...
+⎔ Connection status updated
+Your Worker has access to the following bindings:
+Binding                                         Resource                  Mode
+env.VIDEO_QUEUE (reelbam-video-jobs)            Queue                     local
+env.DB (nuxt-saas-starter-db)                   D1 Database               local
+env.VIDEO_BUCKET (reelbam-video-output)         R2 Bucket                 local
+env.APP_ENVIRONMENT ("(hidden)")                Environment Variable      local
+
+[wrangler:info] Ready on http://127.0.0.1:57278
+[wrangler:info] GET / 404 Not Found (2ms)
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mUncaught Error: INVALID_APP_ENVIRONMENT: expected development, test or production Error[0m
+
+      at parseVideoWorkerEnvironment (file:///Volumes/Development/Workspace/reelbam/workers/video-worker/src/bindings.ts:10:9)
+      at engineDeps (file:///Volumes/Development/Workspace/reelbam/workers/video-worker/src/generation-runner.ts:11:23)
+      at runScheduledMaintenance (file:///Volumes/Development/Workspace/reelbam/workers/video-worker/src/maintenance.ts:6:16)
+      at scheduled (file:///Volumes/Development/Workspace/reelbam/workers/video-worker/src/index.ts:10:11)
+      at dispatcher (file:///Volumes/Development/Workspace/reelbam/workers/video-worker/.wrangler/tmp/bundle-bbcXSJ/middleware-loader.entry.ts:67:20)
+      at scheduled (file:///Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/templates/middleware/middleware-scheduled.ts:8:23)
+      at __facade_invokeChain__ (file:///Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/templates/middleware/common.ts:53:9)
+      at next (file:///Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/templates/middleware/common.ts:50:11)
+      at drainBody (file:///Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts:5:30)
+      at __facade_invokeChain__ (file:///Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/templates/middleware/common.ts:53:9)
+      at __facade_invoke__ (file:///Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/templates/middleware/common.ts:63:9)
+      at fetch (file:///Volumes/Development/Workspace/reelbam/workers/video-worker/.wrangler/tmp/bundle-bbcXSJ/middleware-loader.entry.ts:70:11)
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mUncaught Error: INVALID_APP_ENVIRONMENT: expected development, test or production [0m
+
+
+[wrangler:info] GET /__scheduled 500 Internal Server Error (5ms)
+🪵  Logs were written to "/Users/walter/Library/Preferences/.wrangler/logs/wrangler-2026-11-01_04-49-33_070.log"

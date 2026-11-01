@@ -7,6 +7,8 @@ export const MAX_OUTPUT_BYTES = 5_000_000
 export const OUTBOX_MAX_DELIVERIES = 8
 export const MAX_SUBMIT_ATTEMPTS = 3
 export const MAX_POLLS = 20
+export const MAX_STORAGE_ATTEMPTS = 6
+export const STORAGE_TIMEOUT_MS = 10 * 60_000
 export const LEASE_MS = 30_000
 export const MAINTENANCE_LIMIT = 20
 export const MAIN_QUEUE_NAME = 'reelbam-video-jobs'
@@ -29,15 +31,22 @@ export interface VideoQueueSender {
 }
 
 export interface VideoObjectStore {
-  put(key: string, body: Uint8Array, contentType: string): Promise<void>
-  head(key: string): Promise<{ readonly byteSize: number, readonly contentType: string } | null>
+  /** Create only. Existing bytes must never be overwritten, even by a stale worker. */
+  put(key: string, body: Uint8Array, contentType: string, contentHash: string): Promise<void>
+  head(key: string): Promise<{ readonly byteSize: number, readonly contentType: string, readonly contentHash: string } | null>
   delete(key: string): Promise<void>
+  list?(prefix: string, limit: number, cursor?: string): Promise<{
+    readonly objects: readonly { readonly key: string, readonly uploadedAtMs: number }[]
+    readonly cursor?: string
+  }>
 }
 
 export interface VideoLimits {
   readonly outboxMaxDeliveries: number
   readonly maxSubmitAttempts: number
   readonly maxPolls: number
+  readonly maxStorageAttempts: number
+  readonly storageTimeoutMs: number
   readonly leaseMs: number
   readonly maintenanceLimit: number
   readonly pollDelaySeconds: number
@@ -47,6 +56,8 @@ export const DEFAULT_LIMITS: VideoLimits = {
   outboxMaxDeliveries: OUTBOX_MAX_DELIVERIES,
   maxSubmitAttempts: MAX_SUBMIT_ATTEMPTS,
   maxPolls: MAX_POLLS,
+  maxStorageAttempts: MAX_STORAGE_ATTEMPTS,
+  storageTimeoutMs: STORAGE_TIMEOUT_MS,
   leaseMs: LEASE_MS,
   maintenanceLimit: MAINTENANCE_LIMIT,
   pollDelaySeconds: 1,
@@ -102,8 +113,8 @@ export function submitKey(generationId: string, attemptNumber: number): string {
   return `video_submit:${generationId}:${VIDEO_STEP_ID}:${attemptNumber}`
 }
 
-export function finalOutputKey(environment: string, generationId: string, attemptId: string): string {
-  return `private/${environment}/generations/${generationId}/attempts/${attemptId}/output.mp4`
+export function finalOutputKey(environment: string, generationId: string, attemptId: string, contentHash: string): string {
+  return `private/${environment}/generations/${generationId}/attempts/${attemptId}/outputs/${contentHash}/output.mp4`
 }
 
 export function tempOutputKey(environment: string, generationId: string, attemptId: string, leaseToken: string): string {

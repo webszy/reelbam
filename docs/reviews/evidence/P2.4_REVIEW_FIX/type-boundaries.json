@@ -1,0 +1,56 @@
+{
+  "sourceHasNuxtGeneratedTypes": false,
+  "sourceHasTestNitroGlobals": false,
+  "strictTypecheckedTestFiles": 17,
+  "missingTestFiles": [],
+  "lockfileUnchangedSinceStart": true,
+  "tsconfigOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "types": [
+      "node"
+    ],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@reelbam/video-contracts": [
+        "./packages/video-contracts/src/public.ts"
+      ],
+      "@reelbam/video-contracts/internal": [
+        "./packages/video-contracts/src/internal.ts"
+      ],
+      "@reelbam/data": [
+        "./packages/data/src/index.ts"
+      ]
+    }
+  },
+  "testedFiles": [
+    "packages/data/test/ledger-harness.ts",
+    "packages/data/test/ledger-integrity.sqlite.test.ts",
+    "packages/data/test/ledger-worker.ts",
+    "packages/data/test/ledger.sqlite.test.ts",
+    "packages/data/test/migration-shape.test.ts",
+    "packages/data/test/nitro-globals.d.ts",
+    "packages/data/test/settlement-contract.test.ts",
+    "packages/data/test/settlement-guard.test.ts",
+    "packages/data/test/settlement-source.test.ts",
+    "packages/data/test/video-engine.sqlite.test.ts",
+    "packages/data/test/webhook-globals.ts",
+    "packages/video-core/test/contracts.test.ts",
+    "packages/video-core/test/fixtures.ts",
+    "packages/video-core/test/mock.test.ts",
+    "packages/video-core/test/router.test.ts",
+    "packages/video-core/test/state-machine.test.ts",
+    "workers/video-worker/test/environment.test.ts"
+  ]
+}

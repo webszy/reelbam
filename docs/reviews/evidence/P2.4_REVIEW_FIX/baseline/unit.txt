@@ -1,0 +1,253 @@
+Command: corepack pnpm test:unit
+$ node --experimental-transform-types --import ./scripts/alias-register.mjs --test app/utils/safe-return-to.test.ts server/api/webhooks/creem.test.ts server/services/billing-checkout.test.ts server/utils/zBilling/domain/account-summary.test.ts server/utils/zBilling/domain/billing-history.test.ts server/utils/zBilling/domain/refund.test.ts server/utils/zBilling/test/create-checkout.test.ts server/utils/zBilling/test/creem.test.ts server/utils/zBilling/test/handle-webhook.test.ts server/services/user-profile.test.ts shared/template-catalog.test.ts server/templates/text-to-video.test.ts
+(node:82098) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ resolveSafeReturnTo
+  ✔ accepts only the exact Pricing allowlist path (0.278167ms)
+  ✔ rejects external, protocol-relative, backslash, malformed, and other paths (0.066667ms)
+  ✔ uses a custom fallback when provided (0.040292ms)
+✔ resolveSafeReturnTo (0.794959ms)
+(node:82099) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ Creem webhook contracts
+  ✔ rejects invalid signatures without producing a usable event (3.473875ms)
+  ✔ accepts a signed completed event and matches a pending local order (0.902334ms)
+  ✔ treats duplicate paid facts for the same provider order as idempotent success (0.124333ms)
+  ✔ rejects amount or request-id mismatches so unrelated orders cannot be paid (0.101416ms)
+✔ Creem webhook contracts (5.14975ms)
+▶ buildExpectedOrderCreditFulfillment
+  ✔ builds deterministic grant and ledger descriptors for 5/20/50 packs (0.22475ms)
+  ✔ uses distinct stable ids across orders and entitlement keys (0.056ms)
+  ✔ fails closed for empty, multi-item, or unsupported snapshots (0.113916ms)
+✔ buildExpectedOrderCreditFulfillment (0.494708ms)
+▶ applyCheckoutCompleted credit fulfillment
+  ✔ pays a pending order and creates exactly one grant and one grant transaction (1.381625ms)
+  ✔ rolls back paid transition when a mid-batch entitlement write fails (0.3325ms)
+  ✔ converges via reread when concurrent delivery already paid the same provider order (0.352333ms)
+  ✔ fails when concurrent paid state has a different provider order id (0.273792ms)
+  ✔ is idempotent for exact event replay on an already fulfilled paid order (0.275666ms)
+  ✔ repairs a paid order that has no grant or transaction (0.229292ms)
+  ✔ repairs a paid order that has a grant but no transaction (0.230208ms)
+  ✔ rejects mismatched persisted grant rows instead of silent success (0.162375ms)
+  ✔ rejects mismatched persisted transaction rows (0.179917ms)
+  ✔ does not refill remaining after a grant has been consumed (0.159667ms)
+  ✔ does not refill a fully consumed grant (0.081583ms)
+  ✔ does not refill an expired grant (0.094541ms)
+  ✔ does not refill a grant after cash-refund reclaim (0.06975ms)
+  ✔ refuses to insert a missing original grant transaction after remaining has changed (0.069833ms)
+  ✔ does not create credits for missing orders (0.098792ms)
+  ✔ does not create credits on amount mismatch (0.135208ms)
+  ✔ does not create credits on provider-order conflict for an already terminal order (0.107834ms)
+  ✔ fails closed when the local snapshot is unsupported (0.093542ms)
+  ✔ treats late checkout.completed after refund as a no-op without regrant (0.092875ms)
+✔ applyCheckoutCompleted credit fulfillment (4.624584ms)
+▶ applyRefundCreated and applyDisputeCreated
+  ✔ full refund revokes remaining credits and marks original order refunded (0.780333ms)
+  ✔ partial then completing refund uses cumulative proportional targets (0.728709ms)
+  ✔ records shortfall without zero-value transaction when grant already consumed (0.349417ms)
+  ✔ is idempotent for the same provider refund id (0.735666ms)
+  ✔ rolls back and leaves the webhook retryable when refund version changed (0.255083ms)
+  ✔ rolls back and leaves the webhook retryable when grant balance changed (0.229417ms)
+  ✔ rejects refund amounts that exceed the provider paid base (0.080166ms)
+  ✔ persists dispute.created as opened audit without changing credits (0.148292ms)
+✔ applyRefundCreated and applyDisputeCreated (3.394917ms)
+(node:82100) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ assertCreemPaymentEnabled
+  ✔ allows only the derived boolean true (0.417209ms)
+✔ assertCreemPaymentEnabled (0.773667ms)
+▶ parseIdempotencyKey
+  ✔ accepts 1–128 visible safe ASCII characters (0.109916ms)
+  ✔ rejects missing, empty, whitespace, control, and overlong keys (0.086417ms)
+✔ parseIdempotencyKey (0.257334ms)
+▶ parseCheckoutPriceCode
+  ✔ accepts the three enabled one-time credit packs (0.081583ms)
+  ✔ rejects recurring and unknown price codes (0.080417ms)
+✔ parseCheckoutPriceCode (0.218125ms)
+▶ resolveTrustedAppOrigin
+  ✔ defaults to localhost only in development when app URL is missing (0.107333ms)
+  ✔ accepts an explicit HTTPS pure origin outside development (0.05675ms)
+  ✔ rejects missing/non-https/path/query/fragment/userinfo outside development (0.091583ms)
+✔ resolveTrustedAppOrigin (0.345125ms)
+▶ buildCheckoutSuccessUrl
+  ✔ builds a server-owned success URL with the local order id (0.057ms)
+✔ buildCheckoutSuccessUrl (0.089ms)
+▶ resolveExistingCheckoutOrder
+  ✔ replays a stored checkout URL for the same price (0.128834ms)
+  ✔ returns IDEMPOTENCY_KEY_REUSED for a different price code (0.041209ms)
+  ✔ returns CHECKOUT_FAILED for a failed order (0.042083ms)
+  ✔ returns CHECKOUT_CREATION_UNKNOWN for uncertain pending orders (0.035917ms)
+  ✔ returns CHECKOUT_IN_PROGRESS for pending orders without a URL (0.031916ms)
+✔ resolveExistingCheckoutOrder (0.343958ms)
+(node:82101) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Clerk profile sync preserves identity and never reintroduces business entitlements (0.472ms)
+✔ public profile excludes Clerk identity and serializes dates (1.358083ms)
+(node:82102) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ text-to-video prepare stays closed and does not return a prompt (0.973084ms)
+✔ private prompt rendering stays on the server helper (0.180792ms)
+(node:82103) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ readCreditPackCreditsFromSnapshot
+  ✔ reads credited credits from valid 5/10/30 Credit Pack snapshots (0.573666ms)
+  ✔ reads a JSON-string snapshot that contains one valid purchase item (0.341417ms)
+  ✔ rejects empty, non-array, and multi-item snapshots (0.071583ms)
+  ✔ rejects unsupported keys, types, cadences, and non-positive quantities (0.080208ms)
+✔ readCreditPackCreditsFromSnapshot (2.159625ms)
+▶ selectNextExpiry
+  ✔ returns the earliest eligible expiry and remaining credits (1.24325ms)
+  ✔ sums remaining quantity when several grants share the earliest instant (0.202666ms)
+  ✔ returns null when no qualifying expiring grant exists (0.147375ms)
+  ✔ excludes expired, future, inactive, zero, wrong-key, wrong-type, and other-user grants (0.181ms)
+✔ selectNextExpiry (2.020458ms)
+▶ selectLatestPurchase
+  ✔ maps the newest paid Credit Pack from the immutable snapshot and local amount (0.471ms)
+  ✔ breaks paidAt ties with createdAt descending (0.383084ms)
+  ✔ returns null for an empty owner account (0.139541ms)
+  ✔ excludes pending, failed, expired, refunded, and partially-refunded orders (0.144334ms)
+  ✔ excludes other-user orders and missing paidAt (0.087833ms)
+  ✔ fails instead of falling back when the selected snapshot is invalid (0.12275ms)
+  ✔ fails when the selected paid order has no user-visible amount (0.09075ms)
+✔ selectLatestPurchase (1.698ms)
+▶ buildAccountSummaryFromLocalRows
+  ✔ returns only owner-display facts and never raw order or provider fields (0.22375ms)
+  ✔ maps an empty owner account to successful null facts (0.171083ms)
+  ✔ uses the existing error code instead of fabricating a purchase (0.147833ms)
+✔ buildAccountSummaryFromLocalRows (0.671375ms)
+(node:82104) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ creditActivityLabel
+  ✔ uses the local product snapshot for order-backed grants (0.310916ms)
+  ✔ uses a generic purchased label when the order name is missing (0.048125ms)
+  ✔ maps consume, refund, revoke, expire, and adjustment labels (0.042209ms)
+  ✔ uses a generic label for unknown source or type combinations (0.046708ms)
+✔ creditActivityLabel (0.869875ms)
+▶ buildBillingHistoryFromLocalRows
+  ✔ maps paid, pending, and failed local orders to display rows (1.352833ms)
+  ✔ maps signed credit changes, purchase wording, and nullable expiry (0.16325ms)
+  ✔ keeps at most five newest owner rows and excludes other users (0.230042ms)
+  ✔ returns successful empty arrays when the owner has no history (0.159625ms)
+  ✔ fails instead of fabricating a row for invalid amount, currency, or date (0.111042ms)
+  ✔ fails when a selected credit row has a non-integer change or balance (0.12175ms)
+  ✔ does not expose identifiers, snapshots, or provider fields (0.176792ms)
+  ✔ maps a paid order with an order-linked credits grant (0.06875ms)
+  ✔ maps a paid order without a valid grant as verifying (0.068875ms)
+  ✔ does not display credited quantities for pending, failed, or expired orders (0.078792ms)
+  ✔ maps a refunded order from successful local refund and applied quantities (0.05575ms)
+  ✔ maps a refunded order without adjustments as a refund with no reversal quantity (0.047875ms)
+  ✔ ignores pending refunds and does not infer a reversal from refund amount (0.035875ms)
+  ✔ fails when a matching credits grant has corrupt quantities (0.031208ms)
+✔ buildBillingHistoryFromLocalRows (2.981375ms)
+▶ parseBillingHistoryQuery
+  ✔ treats a missing query as preview mode (0.061166ms)
+  ✔ accepts the two approved page kinds with a bounded page (0.065167ms)
+  ✔ rejects malformed, repeated, mixed, or out-of-range page queries (0.07125ms)
+✔ parseBillingHistoryQuery (0.244125ms)
+▶ buildBillingHistoryPaymentsPage
+  ✔ maps 20 selected owner rows without truncating to the preview cap (0.199334ms)
+  ✔ keeps same-timestamp rows deterministic by internal id without serializing it (4.758875ms)
+  ✔ returns an empty page with truthful totals for an out-of-range page (0.058625ms)
+  ✔ excludes other-user rows from a selected payment page (0.055542ms)
+✔ buildBillingHistoryPaymentsPage (5.132375ms)
+▶ buildBillingHistoryCreditActivityPage
+  ✔ maps a selected credit-activity page and does not mix payment fields (0.147541ms)
+✔ buildBillingHistoryCreditActivityPage (0.173125ms)
+▶ buildBillingHistoryPagination
+  ✔ uses the fixed page size and a zero page count when there are no rows (0.025708ms)
+✔ buildBillingHistoryPagination (0.045208ms)
+(node:82105) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ computeCumulativeCreditTarget
+  ✔ returns full quantity when cumulative refund equals paid base (0.298875ms)
+  ✔ uses floor for partial proportions (0.05025ms)
+  ✔ forces full quantity on final cumulative full refund even with floor rounding (0.045833ms)
+  ✔ rejects cumulative refund above paid base (0.093166ms)
+✔ computeCumulativeCreditTarget (0.915ms)
+▶ planGrantRefundReversal
+  ✔ plans incremental target from cumulative targets not prior applied (0.0925ms)
+  ✔ clamps applied to remaining and records shortfall (0.039375ms)
+✔ planGrantRefundReversal (0.201959ms)
+▶ resolveOrderRefundStatus
+  ✔ marks full cumulative refunds as refunded (0.062583ms)
+  ✔ marks partial cumulative refunds as partially_refunded (0.036583ms)
+✔ resolveOrderRefundStatus (0.174334ms)
+(node:82106) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ parseIdempotencyKey
+  ✔ accepts 1–128 visible safe ASCII characters (0.367583ms)
+  ✔ rejects missing, empty, whitespace, control, and overlong keys (0.139792ms)
+✔ parseIdempotencyKey (0.890958ms)
+▶ parseCheckoutPriceCode
+  ✔ accepts the three enabled one-time credit packs (0.102625ms)
+  ✔ rejects recurring and unknown price codes (0.149667ms)
+✔ parseCheckoutPriceCode (0.322375ms)
+▶ resolveTrustedAppOrigin
+  ✔ defaults to localhost only in development when app URL is missing (0.25075ms)
+  ✔ accepts an explicit HTTPS pure origin outside development (0.098958ms)
+  ✔ rejects missing/non-https/path/query/fragment/userinfo outside development (0.136833ms)
+✔ resolveTrustedAppOrigin (0.63225ms)
+▶ buildCheckoutSuccessUrl
+  ✔ builds a server-owned success URL with the local order id (0.063042ms)
+✔ buildCheckoutSuccessUrl (0.111792ms)
+▶ resolveExistingCheckoutOrder
+  ✔ replays a stored checkout URL for the same price (0.165291ms)
+  ✔ returns IDEMPOTENCY_KEY_REUSED for a different price code (0.096958ms)
+  ✔ returns CHECKOUT_FAILED for a failed order (0.057083ms)
+  ✔ returns CHECKOUT_CREATION_UNKNOWN for uncertain pending orders (0.048125ms)
+  ✔ returns CHECKOUT_IN_PROGRESS for pending orders without a URL (0.047458ms)
+✔ resolveExistingCheckoutOrder (0.4895ms)
+▶ initiateCheckout
+  ✔ inserts a pending order, calls Creem once, and persists Checkout facts (1.4415ms)
+  ✔ uses Creem production API URLs only in production (0.15575ms)
+  ✔ accepts a valid Creem Checkout before order fields are available (0.231833ms)
+  ✔ marks an explicitly rejected Checkout order failed (0.748833ms)
+  ✔ keeps an uncertain Provider result pending and marks it unknown (0.17975ms)
+  ✔ reports exact field differences for an invalid successful response (0.192292ms)
+  ✔ does not expose a Checkout URL when the success update affects no row (0.201916ms)
+  ✔ allows only one same-key insert owner to POST Checkout (0.2905ms)
+✔ initiateCheckout (3.561542ms)
+(node:82107) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ extractCheckoutFacts
+  ✔ reads a detailed Create response (0.567667ms)
+  ✔ normalizes product object form and leaves missing financial fields null (0.07025ms)
+  ✔ does not invent fields from malformed payloads (0.049833ms)
+✔ extractCheckoutFacts (1.108541ms)
+▶ validateCheckoutContract
+  ✔ accepts a complete matching contract with HTTPS URL (0.125208ms)
+  ✔ accepts a matching Checkout before Creem creates order fields (0.046375ms)
+  ✔ rejects untrusted checkout URLs and amount mismatches (0.047416ms)
+✔ validateCheckoutContract (0.309417ms)
+▶ isTrustedCreemCheckoutUrl
+  ✔ accepts HTTPS Creem root and subdomain URLs (2.23275ms)
+  ✔ rejects non-Creem, deceptive, credentialed, and non-standard-port URLs (0.152583ms)
+✔ isTrustedCreemCheckoutUrl (2.499917ms)
+(node:82108) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ verifyAndNormalizeCreemWebhook
+  ✔ accepts a correctly signed checkout.completed payload (5.854458ms)
+  ✔ rejects missing or invalid signatures before trusting the payload (1.911958ms)
+  ✔ rejects incomplete checkout.completed events (0.803ms)
+  ✔ rejects checkout.completed when order status is not paid (0.507375ms)
+  ✔ normalizes non-completed event types as unsupported without paid facts (0.817458ms)
+  ✔ rejects malformed JSON payloads after a valid signature (1.140708ms)
+  ✔ normalizes Creem documented refund.created gross payment fields (1.060208ms)
+  ✔ rejects incomplete refund.created without provider paid amount (1.58675ms)
+  ✔ normalizes a signed dispute.created event as opened audit facts (0.912708ms)
+✔ verifyAndNormalizeCreemWebhook (16.107458ms)
+(node:82109) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ published catalog keeps the six featured wheel templates and adds Neon Night (0.691708ms)
+✔ Neon Night page is its own copy and does not expose a prompt (0.281417ms)
+✔ template fields validate text, length, and select options (0.166625ms)
+✔ VideoObject is emitted only for measured preview files (0.197959ms)
+✔ app code does not contain the private prompt marker (2.411083ms)
+ℹ tests 151
+ℹ suites 34
+ℹ pass 151
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 563.71475

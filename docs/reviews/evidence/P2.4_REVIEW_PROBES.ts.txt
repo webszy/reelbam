@@ -1,0 +1,502 @@
+import '/Volumes/Development/Workspace/reelbam/packages/data/test/webhook-globals.ts'
+import assert from 'node:assert/strict'
+import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import test from 'node:test'
+import { eq } from '/Volumes/Development/Workspace/reelbam/node_modules/drizzle-orm/index.js'
+import { createMockProvider } from '/Volumes/Development/Workspace/reelbam/packages/video-core/src/providers/mock.ts'
+import type { MockScenario } from '/Volumes/Development/Workspace/reelbam/packages/video-core/src/providers/mock.ts'
+import { ModelRegistry } from '/Volumes/Development/Workspace/reelbam/packages/video-core/src/model-registry.ts'
+import { ProviderRegistry } from '/Volumes/Development/Workspace/reelbam/packages/video-core/src/providers/registry.ts'
+import type { ProviderAdapter } from '/Volumes/Development/Workspace/reelbam/packages/video-core/src/provider.ts'
+import type { LogicalModel } from '/Volumes/Development/Workspace/reelbam/packages/video-contracts/src/public.ts'
+import type { ProviderRoute } from '/Volumes/Development/Workspace/reelbam/packages/video-contracts/src/internal.ts'
+import {
+  applyRefundCreated,
+  buildExpectedOrderCreditFulfillment,
+  ensureOrderCreditFulfillment,
+} from '/Volumes/Development/Workspace/reelbam/server/api/webhooks/creem.post.ts'
+import { createGeneration } from '/Volumes/Development/Workspace/reelbam/server/services/video/create-generation.ts'
+import type { Database } from '/Volumes/Development/Workspace/reelbam/packages/data/src/client.ts'
+import { getAvailableCredits } from '/Volumes/Development/Workspace/reelbam/packages/data/src/credits/spendable.ts'
+import { videoAttempts, videoAssets, videoCreditOperations, videoGenerations, videoOutbox, videoProviderCosts } from '/Volumes/Development/Workspace/reelbam/packages/data/src/schema/video.ts'
+import { billingRefundCreditAdjustments, billingRefundCreditSettlements } from '/Volumes/Development/Workspace/reelbam/packages/data/src/schema/index.ts'
+import { dispatchDueOutbox, dispatchOutboxRow } from '/Volumes/Development/Workspace/reelbam/packages/data/src/video/dispatch.ts'
+import { handleVideoMessage, type VideoEngineDeps } from '/Volumes/Development/Workspace/reelbam/packages/data/src/video/engine.ts'
+import { saveAcceptedAttempt } from '/Volumes/Development/Workspace/reelbam/packages/data/src/video/durable.ts'
+import { MOCK_FIXTURE_BYTES } from '/Volumes/Development/Workspace/reelbam/workers/video-worker/src/fixture.ts'
+import { MOCK_FIXTURE_ID, type VideoQueueMessage } from '/Volumes/Development/Workspace/reelbam/packages/data/src/video/protocol.ts'
+import { reclaimOutboxLease } from '/Volumes/Development/Workspace/reelbam/packages/data/src/video/durable.ts'
+import {
+  creditQuote,
+  insertCatalog,
+  insertPaidOrder,
+  insertUser,
+  openLedgerDatabase,
+  type LedgerHandle,
+} from '/Volumes/Development/Workspace/reelbam/packages/data/test/ledger-harness.ts'
+
+const NOW_MS = Date.UTC(2026, 5, 1, 12)
+const NOW = new Date(NOW_MS)
+const USER = 'video-user'
+const textCapability = {
+  id: 'text', mode: 'text-to-video' as const, prompt: 'required' as const,
+  durationSeconds: [5], resolutions: ['720p'], optionalParameters: {},
+}
+const model: LogicalModel = { id: 'model-1', revision: 1, name: 'Mock', capabilities: [textCapability] }
+const routeB: ProviderRoute = {
+  routeId: 'route-b', revision: 1, modelId: model.id, providerId: 'mock-b', providerModelId: 'mock-b-model',
+  adapterVersion: 'mock-v1', enabled: true, priority: 20, capabilityConstraints: [textCapability],
+}
+const routeA: ProviderRoute = { ...routeB, routeId: 'route-a', providerId: 'mock-a', providerModelId: 'mock-a-model', priority: 10 }
+const input = { modelId: model.id, mode: 'text-to-video' as const, prompt: 'a reel', parameters: { durationSeconds: 5, resolution: '720p' } }
+const quote = creditQuote(6)
+
+class MemoryQueue {
+  readonly messages: VideoQueueMessage[] = []
+  failSends = 0
+  failPolls = false
+  async send(message: VideoQueueMessage): Promise<void> {
+    if (this.failPolls && message.eventType === 'poll_status') throw new Error('poll send failed')
+    if (this.failSends > 0) {
+      this.failSends -= 1
+      throw new Error('queue send failed')
+    }
+    this.messages.push(message)
+  }
+}
+
+class MemoryStore {
+  readonly objects = new Map<string, { body: Uint8Array, contentType: string }>()
+  async put(key: string, body: Uint8Array, contentType: string): Promise<void> {
+    this.objects.set(key, { body, contentType })
+  }
+  async head(key: string): Promise<{ byteSize: number, contentType: string } | null> {
+    const found = this.objects.get(key)
+    return found ? { byteSize: found.body.byteLength, contentType: found.contentType } : null
+  }
+  async delete(key: string): Promise<void> {
+    this.objects.delete(key)
+  }
+}
+
+function world(handle: LedgerHandle, scenario: Partial<MockScenario> = {}, routes: readonly ProviderRoute[] = [routeB]) {
+  const queue = new MemoryQueue()
+  const store = new MemoryStore()
+  const clock = { nowMs: () => NOW_MS }
+  let submits = 0
+  let crashOnce = false
+  const inners = routes.map(route => createMockProvider({
+    environment: 'test',
+    providerId: route.providerId,
+    scenario: { fixtureId: MOCK_FIXTURE_ID, completeAfterMs: 0, ...scenario },
+  }, clock))
+  const wrapped: ProviderAdapter[] = inners.map(inner => ({
+    ...inner,
+    async submit(value) {
+      submits += 1
+      const result = await inner.submit(value)
+      if (crashOnce) {
+        crashOnce = false
+        throw new Error('crash-before-save')
+      }
+      return result
+    },
+  }))
+  const providers = new ProviderRegistry(wrapped)
+  const models = new ModelRegistry([model], routes)
+  const deps = (): VideoEngineDeps => ({
+    database: handle.database,
+    providers,
+    store,
+    clock,
+    workerId: 'worker-a',
+    environment: 'test',
+    fixture: { fixtureId: MOCK_FIXTURE_ID, bytes: MOCK_FIXTURE_BYTES, contentType: 'video/mp4' },
+    limits: { pollDelaySeconds: 0, leaseMs: 60_000, maxPolls: 6, maxSubmitAttempts: 3, outboxMaxDeliveries: 8, maintenanceLimit: 20 },
+  })
+  return {
+    queue, store, providers, models, deps, inners,
+    submits: () => submits,
+    armCrash() { crashOnce = true },
+  }
+}
+
+async function seed(database: Database, quantity = 10): Promise<void> {
+  await insertUser(database, USER, NOW)
+  await insertCatalog(database, NOW)
+  await insertPaidOrder(database, {
+    id: 'order-1', userId: USER, productId: 'prod-credits', priceId: 'price-credits',
+    amount: 1000, grantedQuantity: quantity, providerOrderId: 'provider-order-1', now: NOW,
+  })
+  const expected = buildExpectedOrderCreditFulfillment({
+    orderId: 'order-1', userId: USER, paidAt: NOW,
+    entitlementSnapshot: [{
+      entitlement_key: 'credits', entitlement_type: 'consumable', quantity,
+      grant_cadence: 'purchase', expiration_policy: 'fixed_duration', duration_days: 365,
+    }],
+  })
+  if (!expected.ok) throw new Error(expected.errorCode)
+  const granted = await ensureOrderCreditFulfillment(database, expected.fulfillment)
+  if (!granted.ok) throw new Error(JSON.stringify(granted))
+}
+
+function open(): { handle: LedgerHandle, cleanup(): void } {
+  const dir = mkdtempSync(join(tmpdir(), 'reelbam-video-engine-'))
+  const handle = openLedgerDatabase(join(dir, 'engine.sqlite'))
+  return { handle, cleanup: () => { handle.close(); rmSync(dir, { recursive: true, force: true }) } }
+}
+
+async function create(handle: LedgerHandle, rig: ReturnType<typeof world>, key = 'idem-1', body: unknown = input, amount = 6) {
+  return createGeneration(handle.database, {
+    userId: USER,
+    idempotencyKey: key,
+    input: body,
+    quote: amount === 6 ? quote : creditQuote(amount),
+    nowMs: NOW_MS,
+    deadlineAtMs: NOW_MS + 60 * 60 * 1000,
+  }, { models: rig.models, providers: rig.providers, queue: rig.queue, workerId: 'create' })
+}
+
+async function drive(handle: LedgerHandle, rig: ReturnType<typeof world>, steps = 12): Promise<void> {
+  for (let step = 0; step < steps; step += 1) {
+    if (rig.queue.messages.length === 0) {
+      await dispatchDueOutbox({
+        database: handle.database, queue: rig.queue, workerId: 'dispatch', nowMs: NOW_MS, limits: { pollDelaySeconds: 0, leaseMs: 60_000 },
+      })
+    }
+    const message = rig.queue.messages.shift()
+    if (!message) break
+    await handleVideoMessage(rig.deps(), message, 'queue')
+  }
+}
+
+async function generation(database: Database) {
+  const rows = await database.select().from(videoGenerations)
+  assert.equal(rows.length, 1)
+  return rows[0]!
+}
+
+import { runMaintenance } from '/Volumes/Development/Workspace/reelbam/packages/data/src/video/maintenance.ts'
+import { claimAttempt, advanceGeneration, enqueueOutbox } from '/Volumes/Development/Workspace/reelbam/packages/data/src/video/durable.ts'
+
+test('R01 terminal failure outbox keeps sending beyond its delivery budget', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle, { outcome: 'failed' })
+    await create(handle, rig)
+    await drive(handle, rig)
+    assert.equal((await generation(handle.database)).status, 'failed')
+    let sends = 0
+    for (let tick = 1; tick <= 10; tick += 1) {
+      const tickMs = NOW_MS + tick * 61_000
+      const report = await dispatchDueOutbox({ database: handle.database, queue: rig.queue, workerId: 'cron', nowMs: tickMs })
+      sends += report.sent
+      while (rig.queue.messages.length) {
+        assert.equal(await handleVideoMessage({ ...rig.deps(), clock: { nowMs: () => tickMs } }, rig.queue.messages.shift(), 'queue'), 'ack')
+      }
+    }
+    const rows = await handle.database.select().from(videoOutbox)
+    const live = rows.filter(row => row.deliveryStatus === 'pending' || row.deliveryStatus === 'leased')
+    console.log('R01', JSON.stringify({ status: (await generation(handle.database)).status, sends, live: live.map(row => ({ type: row.eventType, count: row.deliveryAttemptCount, status: row.deliveryStatus })) }))
+    assert.equal(sends, 10)
+    assert.ok(live.some(row => row.deliveryAttemptCount > 8))
+  } finally { cleanup() }
+})
+
+test('R02 committed idempotent replay fails after route disablement', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle)
+    const original = await create(handle, rig)
+    assert.equal(original.ok, true)
+    const replay = await createGeneration(handle.database, {
+      userId: USER, idempotencyKey: 'idem-1', input, quote, nowMs: NOW_MS, deadlineAtMs: NOW_MS + 3_600_000,
+    }, { models: new ModelRegistry([model], [{ ...routeB, enabled: false }]), providers: rig.providers })
+    console.log('R02', JSON.stringify({ original, replay }))
+    assert.deepEqual(replay, { ok: false, reason: 'no_compatible_route' })
+    assert.equal(await getAvailableCredits(handle.database, USER, NOW), 4)
+  } finally { cleanup() }
+})
+
+test('R03 stale poll worker advances generation after a new owner claims the lease', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle)
+    await create(handle, rig)
+    await handleVideoMessage(rig.deps(), rig.queue.messages.shift(), 'queue')
+    const row = await generation(handle.database)
+    const attempt = (await handle.database.select().from(videoAttempts))[0]!
+    let enter!: () => void, resume!: () => void
+    const entered = new Promise<void>(resolve => { enter = resolve })
+    const resumed = new Promise<void>(resolve => { resume = resolve })
+    const inner = rig.inners[0]!
+    const providers = new ProviderRegistry([{ ...inner, async getStatus(saved, snapshot) { enter(); await resumed; return inner.getStatus(saved, snapshot) } }])
+    const poll = (await handle.database.select().from(videoOutbox)).find(value => value.eventType === 'poll_status')!
+    const pending = handleVideoMessage({ ...rig.deps(), providers }, poll.payload, 'queue')
+    await entered
+    const later = new Date(NOW_MS + 61_000)
+    const successor = { owner: 'worker-b', token: 'worker-b-token', until: new Date(NOW_MS + 121_000) }
+    assert.equal(await claimAttempt(handle.database, attempt.id, successor, later), true)
+    resume()
+    const outcome = await pending
+    const after = await generation(handle.database)
+    const afterAttempt = (await handle.database.select().from(videoAttempts))[0]!
+    console.log('R03', JSON.stringify({ before: row.status, after: after.status, owner: afterAttempt.leaseOwner, token: afterAttempt.leaseToken, outcome }))
+    assert.equal(afterAttempt.leaseToken, successor.token)
+    assert.equal(after.status, 'storing')
+  } finally { cleanup() }
+})
+
+test('R04 accepted recovery reopens a storing generation after a crash window', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle)
+    await create(handle, rig)
+    const originalBatch = handle.database.batch.bind(handle.database)
+    let enter!: () => void, resume!: () => void
+    const entered = new Promise<void>(resolve => { enter = resolve })
+    const resumed = new Promise<void>(resolve => { resume = resolve })
+    let pause = true
+    handle.database.batch = (async (queries: unknown[]) => {
+      const accepted = pause && queries.some(query => {
+        const q = (query as { toSQL(): { sql: string, params: unknown[] } }).toSQL()
+        return q.sql.startsWith('update "video_attempts"') && q.sql.includes('"request_payload_hash" =')
+      })
+      const result = await originalBatch(queries as never)
+      if (accepted) { pause = false; enter(); await resumed }
+      return result
+    }) as typeof handle.database.batch
+    const start = rig.queue.messages.shift()!
+    const pending = handleVideoMessage(rig.deps(), start, 'queue')
+    await entered
+    const laterMs = NOW_MS + 61_000
+    const successor = { ...rig.deps(), workerId: 'worker-b', clock: { nowMs: () => laterMs } }
+    assert.equal(await handleVideoMessage(successor, start, 'queue'), 'ack')
+    const poll = (await handle.database.select().from(videoOutbox)).find(value => value.eventType === 'poll_status')!
+    assert.equal(await handleVideoMessage(successor, poll.payload, 'queue'), 'ack')
+    assert.equal((await generation(handle.database)).status, 'storing')
+    resume()
+    const outcome = await pending
+    const after = await generation(handle.database)
+    console.log('R04', JSON.stringify({ statusBeforeResume: 'storing', afterResume: after.status, outcome }))
+    assert.equal(after.status, 'processing')
+  } finally { cleanup() }
+})
+
+test('R05 confirmed-absent retry can submit while still queued, then deadline refunds accepted work', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle, { submit: 'unknown', recovery: 'not_found' })
+    const acceptedInner = createMockProvider({ environment: 'test', providerId: routeB.providerId, scenario: { fixtureId: MOCK_FIXTURE_ID, completeAfterMs: 0 } }, { nowMs: () => NOW_MS })
+    let submits = 0, acceptedJob: string | null = null
+    const initialInner = rig.inners[0]!
+    const providers = new ProviderRegistry([{ ...initialInner, async submit(value) {
+      submits += 1
+      if (submits === 1) return initialInner.submit(value)
+      const accepted = await acceptedInner.submit(value)
+      if (accepted.kind === 'accepted') acceptedJob = accepted.handle.jobId
+      throw new Error('process interrupted after provider acceptance')
+    } }])
+    const initial = { ...rig.deps(), providers }
+    await create(handle, rig)
+    const start = rig.queue.messages.shift()!
+    assert.equal(await handleVideoMessage(initial, start, 'queue'), 'ack')
+    const poll = (await handle.database.select().from(videoOutbox)).find(value => value.eventType === 'poll_status')!
+    assert.equal(await handleVideoMessage(initial, poll.payload, 'queue'), 'ack')
+    assert.equal((await generation(handle.database)).status, 'queued')
+    const laterMs = NOW_MS + 61_000
+    const later = { ...initial, clock: { nowMs: () => laterMs } }
+    await assert.rejects(handleVideoMessage(later, start, 'queue'), /interrupted/)
+    const acceptedState = await generation(handle.database)
+    assert.equal(acceptedState.status, 'queued')
+    assert.ok(acceptedJob)
+    const afterDeadlineMs = NOW_MS + 3_601_000
+    const expired = { ...initial, clock: { nowMs: () => afterDeadlineMs } }
+    await runMaintenance({ ...expired, queue: rig.queue })
+    const after = await generation(handle.database)
+    const balance = await getAvailableCredits(handle.database, USER, new Date(afterDeadlineMs))
+    console.log('R05', JSON.stringify({ submits, acceptedJob, statusBeforeDeadline: acceptedState.status, statusAfterDeadline: after.status, balance }))
+    assert.equal(after.status, 'failed')
+    assert.equal(balance, 10)
+  } finally { cleanup() }
+})
+
+test('R06 storing has no deadline or retry budget during persistent storage outage', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle)
+    let puts = 0
+    rig.store.put = async () => { puts += 1; throw new Error('R2 unavailable') }
+    await create(handle, rig)
+    await assert.rejects(drive(handle, rig), /R2 unavailable/)
+    for (let tick = 1; tick <= 10; tick += 1) {
+      const tickMs = NOW_MS + 7_200_000 + tick * 61_000
+      const deps = { ...rig.deps(), clock: { nowMs: () => tickMs } }
+      await runMaintenance({ ...deps, queue: rig.queue })
+      while (rig.queue.messages.length) {
+        const message = rig.queue.messages.shift()!
+        try { await handleVideoMessage(deps, message, 'queue') } catch (error) { assert.match(String(error), /R2 unavailable/) }
+      }
+    }
+    const after = await generation(handle.database)
+    console.log('R06', JSON.stringify({ status: after.status, puts, pastDeadlineMs: 7_810_000 }))
+    assert.equal(after.status, 'storing')
+    assert.ok(puts >= 10)
+  } finally { cleanup() }
+})
+
+test('R07 claimAttempt reports success when UPDATE affects zero rows', async () => {
+  const { handle, cleanup } = open()
+  try {
+    const claimed = await claimAttempt(handle.database, 'does-not-exist', { owner: 'a', token: 'a', until: new Date(NOW_MS + 60_000) }, NOW)
+    console.log('R07', JSON.stringify({ claimed, rows: (await handle.database.select().from(videoAttempts)).length }))
+    assert.equal(claimed, true)
+  } finally { cleanup() }
+})
+
+test('R09 dead first outbox leaves queued deadline settlement stuck forever', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle)
+    rig.queue.failSends = 100
+    await create(handle, rig)
+    for (let tick = 1; tick <= 7; tick += 1) {
+      await dispatchDueOutbox({ database: handle.database, queue: rig.queue, workerId: 'dispatch', nowMs: NOW_MS + tick * 1000 })
+    }
+    assert.equal((await handle.database.select().from(videoOutbox))[0]!.deliveryStatus, 'dead')
+    for (let tick = 0; tick < 3; tick += 1) {
+      const tickMs = NOW_MS + 3_601_000 + tick * 61_000
+      await runMaintenance({ ...rig.deps(), clock: { nowMs: () => tickMs }, queue: rig.queue })
+    }
+    const after = await generation(handle.database)
+    const balance = await getAvailableCredits(handle.database, USER, NOW)
+    console.log('R09', JSON.stringify({ status: after.status, balance, outboxes: (await handle.database.select().from(videoOutbox)).map(r => ({ status: r.deliveryStatus, attempts: r.deliveryAttemptCount })) }))
+    assert.equal(after.status, 'queued')
+    assert.equal(balance, 4)
+  } finally { cleanup() }
+})
+
+test('R10 different creation keys competing for the same credits do not overspend', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle)
+    const outcomes = await Promise.all([create(handle, rig, 'concurrent-a'), create(handle, rig, 'concurrent-b')])
+    const balance = await getAvailableCredits(handle.database, USER, NOW)
+    assert.equal(outcomes.filter(r => r.ok).length, 1)
+    assert.equal((await handle.database.select().from(videoGenerations)).length, 1)
+    assert.equal((await handle.database.select().from(videoCreditOperations)).length, 1)
+    assert.equal((await handle.database.select().from(videoOutbox)).length, 1)
+    assert.equal(balance, 4)
+    console.log('R10', JSON.stringify({ outcomes, balance }))
+  } finally { cleanup() }
+})
+
+test('R11 lost commit response recovers and subsequent request replays the same generation', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle)
+    const batch = handle.database.batch.bind(handle.database)
+    let fail = true
+    handle.database.batch = (async (queries: unknown[]) => {
+      const result = await batch(queries as never)
+      if (fail) { fail = false; throw new Error('commit response lost') }
+      return result
+    }) as typeof handle.database.batch
+    const created = await create(handle, rig)
+    const replay = await create(handle, rig)
+    assert.ok(created.ok && replay.ok)
+    if (!created.ok || !replay.ok) return
+    assert.equal(created.generationId, replay.generationId)
+    assert.equal(replay.replay, true)
+    assert.equal((await handle.database.select().from(videoCreditOperations)).length, 1)
+    assert.equal(await getAvailableCredits(handle.database, USER, NOW), 4)
+    console.log('R11', JSON.stringify({ generationId: created.generationId, replay: replay.replay, balance: 4 }))
+  } finally { cleanup() }
+})
+
+test('R12 poll call failures exhaust poll budget without a second submit or refund', async () => {
+  const { handle, cleanup } = open()
+  try {
+    await seed(handle.database)
+    const rig = world(handle, { statusUnavailableForMs: 3_600_000 })
+    await create(handle, rig)
+    await drive(handle, rig, 30)
+    const row = await generation(handle.database)
+    const attempt = (await handle.database.select().from(videoAttempts))[0]!
+    console.log('R12', JSON.stringify({ status: row.status, error: row.errorCode, submits: rig.submits(), metadata: attempt.recoveryMetadata }))
+    assert.equal(row.status, 'needs_review')
+    assert.equal(row.errorCode, 'poll_budget_exhausted')
+    assert.equal(rig.submits(), 1)
+    assert.equal((await handle.database.select().from(videoCreditOperations)).filter(r => r.operationType === 'return').length, 0)
+  } finally { cleanup() }
+})
+
+test('R08 real Video Worker runs with local D1, Queue and R2', { timeout: 30_000 }, async () => {
+  const { createRequire } = await import('node:module')
+  const root = '/Volumes/Development/Workspace/reelbam'
+  const { realpathSync } = await import('node:fs')
+  const localRequire = createRequire(realpathSync(root + '/node_modules/wrangler/package.json'))
+  const esbuild = localRequire('esbuild')
+  const { Miniflare } = await import(root + '/node_modules/.pnpm/miniflare@4.20260722.0/node_modules/miniflare/dist/src/index.js')
+  const { createDatabase } = await import(root + '/packages/data/src/client.ts')
+  const { localMockRegistries } = await import(root + '/workers/video-worker/src/catalog.ts')
+  const bundled = await esbuild.build({ entryPoints: [root + '/workers/video-worker/src/index.ts'], bundle: true, format: 'esm', platform: 'browser', target: 'es2022', external: ['node:crypto'], write: false, tsconfig: root + '/tsconfig.video.json' })
+  const mf = new Miniflare({ workers: [
+    { name: 'producer', modules: true, script: 'export default { async fetch() { return new Response("local-only") } }', d1Databases: { DB: 'review-d1' }, queueProducers: { VIDEO_QUEUE: 'reelbam-video-jobs' }, r2Buckets: { VIDEO_BUCKET: 'review-output' }, compatibilityDate: '2026-07-28', compatibilityFlags: ['nodejs_compat'] },
+    { name: 'actual-video-worker', modules: true, script: bundled.outputFiles[0].text, bindings: { APP_ENVIRONMENT: 'test' }, d1Databases: { DB: 'review-d1' }, queueProducers: { VIDEO_QUEUE: 'reelbam-video-jobs' }, queueConsumers: { 'reelbam-video-jobs': { maxBatchTimeout: 0.05, maxRetries: 3, deadLetterQueue: 'reelbam-video-jobs-dlq' }, 'reelbam-video-jobs-dlq': { maxBatchTimeout: 0.05, maxRetries: 1 } }, r2Buckets: { VIDEO_BUCKET: 'review-output' }, compatibilityDate: '2026-07-28', compatibilityFlags: ['nodejs_compat'] },
+  ] })
+  try {
+    const binding = await mf.getD1Database('DB', 'producer')
+    for (const file of ['0000_fast_magdalene.sql', '0001_video_business.sql', '0002_provider_cost_check.sql', '0003_ledger_integrity.sql']) {
+      for (const chunk of readFileSync(root + '/drizzle/' + file, 'utf8').split('--> statement-breakpoint')) {
+        if (chunk.trim()) await binding.prepare(chunk.trim()).run()
+      }
+    }
+    const database = createDatabase(binding)
+    await seed(database)
+    const registries = localMockRegistries('test', { nowMs: () => Date.now() })
+    const queue = await mf.getQueueProducer('VIDEO_QUEUE', 'producer')
+    const nowMs = Date.now()
+    const body = { ...input, modelId: 'mock-motion' }
+    const command = { userId: USER, idempotencyKey: 'runtime-1', input: body, quote, nowMs, deadlineAtMs: nowMs + 3_600_000 }
+    const created = await createGeneration(database, command, { ...registries, queue })
+    assert.equal(created.ok, true)
+    let done = await generation(database)
+    for (let tick = 0; tick < 80 && done.status !== 'succeeded'; tick += 1) {
+      await dispatchDueOutbox({ database, queue, workerId: 'local-test-cron', nowMs: Date.now() })
+      await new Promise(resolve => setTimeout(resolve, 100))
+      done = await generation(database)
+    }
+    assert.equal(done.status, 'succeeded')
+    assert.equal(await getAvailableCredits(database, USER, new Date()), 4)
+    const assets = await database.select().from(videoAssets)
+    assert.equal(assets.length, 1)
+    const bucket = await mf.getR2Bucket('VIDEO_BUCKET', 'producer')
+    const object = await bucket.get(assets[0]!.objectKey)
+    assert.ok(object)
+    assert.equal(object.size, MOCK_FIXTURE_BYTES.byteLength)
+    assert.deepEqual(new Uint8Array(await object.arrayBuffer()), MOCK_FIXTURE_BYTES)
+    const costs = await database.select().from(videoProviderCosts)
+    assert.equal(costs.length, 1)
+    assert.equal(costs[0]!.amountMicros, 0)
+    const replay = await createGeneration(database, command, registries)
+    assert.equal(replay.ok && replay.replay, true)
+    await binding.prepare("CREATE TRIGGER review_fail_outbox BEFORE INSERT ON video_outbox BEGIN SELECT RAISE(ABORT, 'CHECK constraint failed: review_outbox_failure'); END").run()
+    const refused = await createGeneration(database, { ...command, idempotencyKey: 'runtime-rollback', quote: creditQuote(2) }, registries)
+    assert.equal(refused.ok, false)
+    assert.equal((await database.select().from(videoGenerations)).length, 1)
+    assert.equal(await getAvailableCredits(database, USER, new Date()), 4)
+    console.log('R08', JSON.stringify({ status: done.status, assetCount: assets.length, objectBytes: object.size, costMicros: costs[0]!.amountMicros, replay, atomicRollback: refused }))
+  } finally { await mf.dispose() }
+})

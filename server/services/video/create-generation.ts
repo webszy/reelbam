@@ -1,5 +1,5 @@
 import { ProviderRouter, RoutingError } from '../../../packages/video-core/src/router.ts'
-import { VideoValidationError } from '../../../packages/video-core/src/validation.ts'
+import { validateGenerationInput, VideoValidationError } from '../../../packages/video-core/src/validation.ts'
 import type { ModelRegistry } from '../../../packages/video-core/src/model-registry.ts'
 import type { ProviderRegistry } from '../../../packages/video-core/src/providers/registry.ts'
 import type { GenerationInput } from '../../../packages/video-contracts/src/public.ts'
@@ -11,9 +11,8 @@ import {
   videoConsumeOperationKey,
 } from '../../../packages/data/src/credits/contract.ts'
 import { commitConsumePlan, prepareConsumeCharge } from '../../../packages/data/src/credits/consume.ts'
-import { LedgerCommitUnknown } from '../../../packages/data/src/credits/runtime.ts'
+import { floorToSqliteMs, LedgerCommitUnknown } from '../../../packages/data/src/credits/runtime.ts'
 import { listChargeCandidates } from '../../../packages/data/src/credits/spendable.ts'
-import { floorToSqliteMs } from '../../../packages/data/src/credits/runtime.ts'
 import { dispatchOutboxRow } from '../../../packages/data/src/video/dispatch.ts'
 import { generationInsert, outboxInsert } from '../../../packages/data/src/video/durable.ts'
 import type { VideoQueueSender } from '../../../packages/data/src/video/protocol.ts'
@@ -57,16 +56,28 @@ export async function createGeneration(
   command: CreateGenerationCommand,
   deps: CreateGenerationDeps,
 ): Promise<CreateGenerationResult> {
-  const nowMs = floorToSqliteMs(command.nowMs)
-  const deadlineMs = floorToSqliteMs(command.deadlineAtMs)
-  if (nowMs === null || deadlineMs === null || deadlineMs <= nowMs) return { ok: false, reason: 'invalid_deadline' }
   if (command.userId.trim() === '') return { ok: false, reason: 'user_not_found' }
   if (command.idempotencyKey.trim() === '' || command.idempotencyKey.length > 200) {
     return { ok: false, reason: 'invalid_input' }
   }
+  // Replay depends on the original business input, never today's catalog,
+  // price, asset availability, or a deadline supplied for another creation.
+  let canonical: GenerationInput
+  try {
+    canonical = validateGenerationInput(command.input)
+  }
+  catch (error) {
+    if (error instanceof VideoValidationError) return { ok: false, reason: 'invalid_input' }
+    throw error
+  }
+  const canonicalHash = hashCanonicalInput(canonical)
+  const existing = await readGenerationByKey(database, command.userId, command.idempotencyKey)
+  if (existing) return sameOrConflict(existing.canonicalInputHash, canonicalHash, existing.id, existing.status)
+  const nowMs = floorToSqliteMs(command.nowMs)
+  const deadlineMs = floorToSqliteMs(command.deadlineAtMs)
+  if (nowMs === null || deadlineMs === null || deadlineMs <= nowMs) return { ok: false, reason: 'invalid_deadline' }
   const quote = parseCreditQuoteSnapshot(command.quote)
   if (!quote) return { ok: false, reason: 'invalid_quote' }
-
   let snapshot
   try {
     snapshot = new ProviderRouter(deps.models, deps.providers).select(command.input)
@@ -76,8 +87,6 @@ export async function createGeneration(
     if (error instanceof RoutingError) return { ok: false, reason: error.code }
     throw error
   }
-  const canonical = snapshot.input
-  const canonicalHash = hashCanonicalInput(canonical)
   if (canonicalizeGenerationInput(canonical).length === 0) return { ok: false, reason: 'invalid_input' }
 
   const user = await readUser(database, command.userId)
@@ -86,9 +95,6 @@ export async function createGeneration(
   if (assetError) return assetError
 
   const now = new Date(nowMs)
-  const existing = await readGenerationByKey(database, command.userId, command.idempotencyKey)
-  if (existing) return sameOrConflict(existing.canonicalInputHash, canonicalHash, existing.id, existing.status)
-
   const generationId = `gen_${crypto.randomUUID()}`
   const outboxId = `obx_${crypto.randomUUID()}`
   const grants = await listChargeCandidates(database, command.userId, now)

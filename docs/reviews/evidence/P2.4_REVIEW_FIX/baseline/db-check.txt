@@ -1,0 +1,5 @@
+Command: corepack pnpm db:check
+$ drizzle-kit check
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/Volumes/Development/Workspace/reelbam/drizzle.config.ts'
+Everything's fine 🐶🔥

@@ -1,0 +1,47 @@
+{
+  "isolatedState": "/var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7",
+  "existingWranglerStateModified": false,
+  "results": [
+    {
+      "command": "node node_modules/wrangler/bin/wrangler.js d1 migrations apply DB --local --config wrangler.video-local.jsonc --persist-to /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/local/migrations.txt"
+    },
+    {
+      "command": "node node_modules/wrangler/bin/wrangler.js dev --local --persist-to /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7 --ip 127.0.0.1 --port 57223 --inspector-port 0 --test-scheduled --show-interactive-dev-session=false --config wrangler.video-local.jsonc --config workers/video-worker/wrangler.jsonc",
+      "status": "PASS",
+      "rootStatus": 200,
+      "pageBytes": 10490,
+      "processStopped": true,
+      "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/local/dual-worker.txt"
+    },
+    {
+      "command": "node node_modules/wrangler/bin/wrangler.js dev --local --persist-to /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7 --ip 127.0.0.1 --port 57251 --inspector-port 0 --test-scheduled --show-interactive-dev-session=false --config workers/video-worker/wrangler.jsonc",
+      "status": "PASS",
+      "rootStatus": 404,
+      "scheduledStatus": 200,
+      "scheduledResponse": "Ran scheduled event",
+      "processStopped": true,
+      "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/local/video-worker.txt"
+    },
+    {
+      "command": "node node_modules/wrangler/bin/wrangler.js dev --local --persist-to /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7 --ip 127.0.0.1 --port 57278 --inspector-port 0 --test-scheduled --show-interactive-dev-session=false --config workers/video-worker/wrangler.jsonc --var APP_ENVIRONMENT:staging",
+      "status": "PASS",
+      "rootStatus": 404,
+      "scheduledStatus": 500,
+      "scheduledResponse": "Error: INVALID_APP_ENVIRONMENT: expected development, test or production\n    at async Object.fetch (file:///Volumes/Development/Workspace/reelbam/node_modules/.pnpm/miniflare@4.20260722.0/node_modules/miniflare/dist/src/workers/core/entry.worker.js:4709:22)",
+      "processStopped": true,
+      "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/local/invalid-worker.txt"
+    },
+    {
+      "command": "node node_modules/wrangler/bin/wrangler.js dev --local --persist-to /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-wrangler-mvxn1en7 --ip 127.0.0.1 --port 57310 --inspector-port 0 --test-scheduled --show-interactive-dev-session=false --config workers/video-worker/wrangler.jsonc --var APP_ENVIRONMENT:production",
+      "status": "PASS",
+      "rootStatus": 404,
+      "scheduledStatus": 200,
+      "scheduledResponse": "Ran scheduled event",
+      "processStopped": true,
+      "log": "docs/reviews/evidence/P2.4_REVIEW_FIX/local/production-worker.txt"
+    }
+  ]
+}

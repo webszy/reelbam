@@ -1,0 +1,13 @@
+{
+  "local_links_missing": [],
+  "preserved_configuration_and_migration_changes": [],
+  "lockfile_diff": "6\t0\tpnpm-lock.yaml",
+  "fixture_sha256": "665cc61f99b795554a96a73f9b7e3a6c61c91874501111f6c1d874076f6c4e29",
+  "tests": {
+    "core": 21,
+    "data": 127,
+    "unit": 151,
+    "worker": 5,
+    "total": 304
+  }
+}

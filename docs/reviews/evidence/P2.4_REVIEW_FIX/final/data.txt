@@ -1,0 +1,200 @@
+Command: corepack pnpm test:data
+$ node --experimental-transform-types --import ./scripts/alias-register.mjs --test packages/data/test/*.test.ts
+(node:83036) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ missing initial grant and a missing middle row cannot pass reconciliation (61.154084ms)
+✔ same-second reverse lexical generations, returns, and cash reclaim retain write order (35.714167ms)
+✔ strict grant triggers reject NULL, fractional, negative, and excess quantities (23.752958ms)
+✔ unknown/accepted attempts cannot claim submission_rejected; evidence can compose atomically (62.770667ms)
+✔ old attempt, wrong evidence, and replaced lease cannot settle a current generation (55.73925ms)
+✔ a success committed after return planning rolls the entire stale return back (28.803459ms)
+✔ cross-grant stale second write rolls back the first grant and every charge row (25.237167ms)
+✔ composeAfter failure rolls back task, outbox, operation, ledger, and grant (22.851041ms)
+✔ changing a generation operation key cannot charge again; zero charges create no credit rows (27.326417ms)
+✔ 40% and 50% refunds preserve exactly 6 and 5 credits after return (63.087542ms)
+✔ cash-reclaimed credits return only to the refunded order; the other order is restored (30.276375ms)
+✔ commit response/read loss preserves operation identity and never repeats a charge or return (97.976ms)
+(node:83036) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:83036) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ two real connections returning the same generation settle exactly once (532.1805ms)
+(node:83036) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:83036) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:83036) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ refund and return races on separate connections converge without changing historical shortfall (816.188292ms)
+✔ expired return excludes value and preserves the historical expiry and full ledger (20.212833ms)
+✔ full refund then late return then duplicate/late checkout never issues again (20.267875ms)
+✔ a refund planned before return aborts and retries with the restored balance (21.518833ms)
+✔ zero recovery and two zero-net returns still serialize against the shared order fence (26.0835ms)
+(node:83036) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:83037) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ P2.3 sqlite ledger
+  ✔ T01 single grant consume writes per-grant balances (30.369333ms)
+  ✔ T02 consumes earliest-expiry grants first and splits across grants (27.394875ms)
+  ✔ T03 insufficient balance leaves no rows (25.903916ms)
+(node:83037) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✔ T04 concurrent consume does not overdraft (554.333959ms)
+  ✔ T05 same operation id charges once (23.4065ms)
+  ✔ T06 same operation id with a different amount is refused (25.143208ms)
+  ✔ T07 failure return restores the original grant once (37.087125ms)
+  ✔ T08 a succeeded generation cannot be refunded by a late failure (30.037625ms)
+  ✔ T09 return after expiry does not restore spendable value (29.3815ms)
+  ✔ T10 full cash refund then late video return keeps spendable at 0 (31.558584ms)
+  ✔ T11 partial cash refund across grants then failure return (30.215167ms)
+  ✔ T12 cash refund concurrent with video return ends at spendable 0 (30.438417ms)
+  ✔ T13 duplicate Creem fulfillment after consume does not refill (28.792834ms)
+  ✔ T14 missing original grant transaction after consume is not repaired (25.564708ms)
+  ✔ T15 retry after a committed consume stays idempotent (29.305125ms)
+  ✔ T16 rebuilt ledger matches remainingQuantity (33.329417ms)
+  ✔ T17 duplicate refund, duplicate return, and reverse order stay consistent (67.855791ms)
+  ✔ A/B shortfall clawback totals 6 and leaves spendable 4 (42.508958ms)
+  ✔ composeBefore rolls back with a failing grant CASE (26.769333ms)
+  ✔ needs_review and submission_unknown do not auto-return (27.320666ms)
+✔ P2.3 sqlite ledger (1158.372334ms)
+(node:83037) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:83038) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ 增量迁移形状
+  ✔ 0000 基线 SQL 与 snapshot 保持原字节 (1.598583ms)
+  ✔ 0001 SQL 与 snapshot 保持已写入的字节 (1.1145ms)
+  ✔ journal 追加 0001 至 0003，不改写原有条目 (1.032042ms)
+  ✔ 0001 只创建七张新表，不 DROP 或 ALTER (0.257125ms)
+  ✔ 0001 包含幂等、归属、接单和成本去重约束 (0.7835ms)
+  ✔ 0001 snapshot 保留旧表并接上 prevId (0.963083ms)
+  ✔ 0002 只收紧已知成本 CHECK，并追加 shortfall 触发器 (0.160083ms)
+  ✔ 0002 snapshot 接上 0001，且只改已知成本 CHECK (0.817417ms)
+  ✔ 兼容入口不再保留第二份表定义，data 不引用 server (0.51575ms)
+✔ 增量迁移形状 (7.876875ms)
+▶ P2.3 integrity migration
+  ✔ 0003 appends ledger order and attempt evidence without replacing existing tables (1.369125ms)
+✔ P2.3 integrity migration (1.429208ms)
+(node:83039) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ 原子消费计划
+  ✔ 按最近到期优先，空到期排在最后，并跨 grant 拆分 (1.933667ms)
+  ✔ 余额不足时不产生部分扣费 (0.249833ms)
+  ✔ 0 积分返回空批次；非法 grant 与金额被拒绝 (0.202125ms)
+✔ 原子消费计划 (3.395209ms)
+▶ 失败返还计划
+  ✔ 全额现金退款后的 6 积分返还全部补收，可消费余额保持 0 (15.61375ms)
+  ✔ 部分现金退款只补收未回收额度，其余恢复为可消费 (1.547584ms)
+  ✔ 多笔 shortfall 按创建时间再按调整 ID 补收 (0.770208ms)
+  ✔ 到期后返还清掉本次返还和该 grant 上已有剩余 (1.250875ms)
+  ✔ 政策撤销只作废本次应返还部分，不没收无关剩余 (0.107416ms)
+  ✔ 返还后超过 granted、重复或缺 grant、损坏 shortfall 都拒绝 (0.092209ms)
+  ✔ 幂等键稳定，且只有 failed 允许失败结算 (0.090583ms)
+✔ 失败返还计划 (19.760417ms)
+▶ 输入快照与报价
+  ✔ 规范化输入排除报价和路由，可选参数改变哈希 (1.494125ms)
+  ✔ 报价快照拒绝未知字段和非积分单位 (0.097667ms)
+✔ 输入快照与报价 (1.650875ms)
+(node:83040) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ 现金退款与返还的共享守卫
+  ✔ applied 为 0 仍然写出 grant 守卫，净余额可以不变 (0.659ms)
+  ✔ 零回收：退款不改变余额时，后提交的返还整批中止 (0.557042ms)
+  ✔ 净余额变化为 0 时，余额相同不能代替 refund_version (0.233792ms)
+✔ 现金退款与返还的共享守卫 (1.916833ms)
+▶ 两个任务不能重复补收同一 shortfall
+  ✔ A 先提交时只补收 6，B 重算后可消费 4，原 shortfall 仍为 6 (0.912ms)
+  ✔ B 先提交 4 时，A 重算只再补收 2，合计仍是 6 (0.201875ms)
+  ✔ 多 grant 的完整 clawback 流水按不同顺序仍能对账 (0.219583ms)
+  ✔ 拒绝重复、缺失或无关的 clawback 流水 (0.1245ms)
+  ✔ 结算合计、grant 和 clawback 流水必须互相吻合 (0.091083ms)
+✔ 两个任务不能重复补收同一 shortfall (2.002958ms)
+▶ 失败与成功落账
+  ✔ 最新版本不能授权 succeeded 变成 failed (0.110334ms)
+  ✔ 合法失败要求原状态、事件和对应 lease，丢失 lease 时中止 (0.079625ms)
+  ✔ 成功只从 storing 加 output_stored 进入，且不返还积分 (0.055833ms)
+✔ 失败与成功落账 (0.322541ms)
+▶ 已知供应商成本
+  ✔ known 0 和 unknown NULL 合法，空金额、小写和非字母币种非法 (0.521334ms)
+✔ 已知供应商成本 (0.689291ms)
+(node:83041) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ 消费提交守卫
+  ✔ 余额未变但状态已撤销时整批失败 (0.392792ms)
+  ✔ 归属、权益、有效期和来源进入同一失败裁决 (0.329167ms)
+  ✔ 多 grant 中有一条撤销时不留下部分扣费 (2.047125ms)
+✔ 消费提交守卫 (3.874125ms)
+▶ 消费与返还的来源闭合
+  ✔ 扣费前拒绝不支持来源，不产生扣费行 (1.251584ms)
+  ✔ order 与 promotion 可以一起扣，返还只给 order 加版本围栏 (2.510083ms)
+  ✔ 已消费的非 order 来源不会在返还时被拒绝 (0.565125ms)
+  ✔ 空 claim 仍然失败，不为非 order 伪造订单 (0.422208ms)
+✔ 消费与返还的来源闭合 (5.25975ms)
+▶ 零报价失败结算
+  ✔ 真实零 consume operation 且没有消费流水时写出零 return，不写流水 (0.484208ms)
+  ✔ 缺少 operation、已有消费流水或报价不是 0 时失败 (0.286667ms)
+  ✔ 零消费失败仍要求合法终态，不因空 grant 放行 (0.5195ms)
+✔ 零报价失败结算 (1.946209ms)
+{"event":"video_needs_review","generationId":"gen_f1a79a60-ef13-4272-9543-453840f24659","attemptId":"att_d4c7bcda-5737-4eff-afbb-007aa981cc53","errorCode":"recovery_budget_exhausted"}
+{"event":"video_needs_review","generationId":"gen_6a550025-da51-4fea-823e-d728a7349534","attemptId":"att_5a685140-a28d-48ed-828e-cd9d55639b1a","errorCode":"poll_budget_exhausted"}
+{"event":"video_needs_review","generationId":"gen_02cf7db5-60c9-49b7-9d4f-14d89e100646","errorCode":"deadline_unconfirmed"}
+{"event":"video_needs_review","generationId":"gen_f574c6ee-3e24-4371-883a-5929079cbeed","attemptId":"att_e797e8e1-33d7-4976-9a84-3156e3107f78","errorCode":"storage_budget_exhausted"}
+{"event":"video_needs_review","generationId":"gen_fea92d6d-d390-41fb-8c11-2a4cab599c43","errorCode":"storage_deadline_exceeded"}
+{"event":"video_needs_review","generationId":"gen_74f9fb28-d37d-436d-9b27-623000b3be3b","attemptId":"att_20e410ce-54d4-4556-a3da-2cdf76e7fd05","errorCode":"recovery_confirmed_absent"}
+(node:83042) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ T01 creates a mock task, charges once, and writes one outbox row (51.773875ms)
+✔ T02 insufficient credits leaves no generation or outbox (28.392125ms)
+✔ outbox insert failure rolls the charge and generation back (24.325583ms)
+✔ T03 same idempotency key returns the same task and does not charge again (25.12575ms)
+✔ T04 same key with a different input conflicts (26.390708ms)
+✔ T05 a failed queue send keeps the outbox and a later send does not charge again (36.7065ms)
+✔ T06 a send that is not marked delivered can be sent again without a second submit (44.971458ms)
+✔ T07 two consumers leave one submit (31.073875ms)
+✔ T08 an expired lease can be taken over and the old token cannot write (42.192167ms)
+✔ T09 a crash after mock acceptance recovers the same request id (32.583167ms)
+✔ T10 a failed poll enqueue does not submit again (40.59525ms)
+✔ T11 pending polls do not increment submits (54.290208ms)
+✔ T12 a confirmed provider failure refunds once (41.368708ms)
+✔ T13 submission_unknown does not refund or submit twice (42.328125ms)
+✔ T14 a late failure does not change a succeeded task (34.6155ms)
+✔ R23 unresolved submission parked in needs_review never invents failure evidence or refunds (58.31725ms)
+✔ T15 an R2 object is registered again without a second submit when D1 completion fails (48.880917ms)
+✔ T16 one final asset wins when two workers store (41.017584ms)
+✔ T17 a dead letter does not refund or submit (35.7025ms)
+✔ T18 a new runner object resumes a crashed task (43.884417ms)
+✔ T19 an old route snapshot stays on its provider after the default route changes (40.762417ms)
+✔ T20 mock provider cost is zero and credits stay on the ledger (38.696666ms)
+✔ T21 a cash refund before a late generation failure keeps the clawback (48.075334ms)
+✔ T22 public preview files do not call the generation engine (3.792334ms)
+✔ R01 failed, succeeded and needs_review stop all outbox delivery (163.772291ms)
+✔ R02 replay survives route, quote and deadline changes (24.535542ms)
+✔ R03 expired poll owner cannot advance after takeover or after I/O expiry (55.90575ms)
+✔ R04 accepted, generation edge and poll event commit together; late worker cannot regress storing (35.097333ms)
+✔ R05 recovered absence followed by acceptance and crash never gets deadline refund (28.583958ms)
+✔ R05 ledger itself rejects queued deadline settlement with unresolved dispatch (22.523542ms)
+✔ R06 persistent storage errors exhaust a durable budget, never Submit or refund (45.857834ms)
+✔ R07 a missing attempt never reports a successful claim (15.227208ms)
+✔ R09 dead first event recovers at deadline and settles exactly once (31.784292ms)
+✔ R10 different keys racing for the same credits cannot overspend (20.469542ms)
+✔ R11 lost commit response returns the same generation and one charge (19.923125ms)
+✔ R12 storage deadline survives restarts and does not reuse task scan timestamps (27.680417ms)
+✔ R13 exhausted successful sends stop instead of creating an endless outbox loop (30.336459ms)
+✔ R14 a failed accepted batch does not save half of the acceptance protocol (34.26725ms)
+✔ R15 same key replay does not require an input asset to remain available (23.011042ms)
+✔ R16 bounded maintenance rotates past twenty tasks without business progress (108.50475ms)
+✔ R17 exhausted poll delivery stops in needs_review without resetting its budget (26.322291ms)
+✔ R18 an old R2 writer cannot replace the winning output or register after lease takeover (34.438208ms)
+✔ R19 terminal cleanup uses a persisted cursor and protects the referenced asset (33.282792ms)
+✔ R20 repeated authoritative absence reaches one refund after the submission budget (43.9535ms)
+✔ R21 confirmed retryable rejections exhaust only the submit budget (34.075875ms)
+✔ R22 concurrent identical creation keys return one generation and one charge (22.517458ms)
+ℹ tests 128
+ℹ suites 13
+ℹ pass 128
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2685.084708

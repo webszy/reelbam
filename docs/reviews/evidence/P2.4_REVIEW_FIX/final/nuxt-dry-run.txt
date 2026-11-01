@@ -1,0 +1,40 @@
+Command: node node_modules/wrangler/bin/wrangler.js deploy --dry-run --config wrangler.jsonc --outdir /var/folders/f3/4rvwcbmn4bl7zqmpvhl5zbk00000gn/T/reelbam-p24-dry-run-3ix9lpdk/nuxt-dry-run
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mFailed to write to log file Error: EPERM: operation not permitted, open '/Users/walter/Library/Preferences/.wrangler/logs/wrangler-2026-11-01_04-50-14_402.log'[0m
+
+      at async open (node:internal/fs/promises:697:25)
+      at async writeFile (node:internal/fs/promises:1317:14)
+      at async /Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/wrangler-dist/cli.js:59895:7
+      at async Mutex.runWith (/Volumes/Development/Workspace/reelbam/node_modules/.pnpm/miniflare@4.20260722.0/node_modules/miniflare/dist/src/index.js:71895:48)
+      at async appendToDebugLogFile (/Volumes/Development/Workspace/reelbam/node_modules/.pnpm/wrangler@4.114.0/node_modules/wrangler/wrangler-dist/cli.js:59892:3) {
+    errno: -1,
+    code: 'EPERM',
+    syscall: 'open',
+    path: '/Users/walter/Library/Preferences/.wrangler/logs/wrangler-2026-11-01_04-50-14_402.log'
+  }
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mWould have written: [0m
+
+  --- 2026-11-01T04:50:14.484Z debug
+  🪵  Writing logs to "/Users/walter/Library/Preferences/.wrangler/logs/wrangler-2026-11-01_04-50-14_402.log"
+  ---
+  
+
+
+
+ ⛅️ wrangler 4.114.0 (update available 4.156.0)
+───────────────────────────────────────────────
+✨ Read 81 files from the assets directory /Volumes/Development/Workspace/reelbam/.output/public
+Total Upload: 1657.88 KiB / gzip: 395.45 KiB
+Your Worker has access to the following bindings:
+Binding                                                              Resource                  
+env.DB (nuxt-saas-starter-db)                                        D1 Database               
+env.ASSETS                                                           Assets                    
+env.APP_ENVIRONMENT ("development")                                  Environment Variable      
+env.APP_URL ("http://localhost:3000")                                Environment Variable      
+env.NUXT_PUBLIC_SITE_URL ("http://localhost:3000")                   Environment Variable      
+env.NUXT_CREEM_PAYMENT_ENABLED ("false")                             Environment Variable      
+env.NUXT_PUBLIC_CREEM_PAYMENT_ENABLED ("false")                      Environment Variable      
+
+--dry-run: exiting now.
+🪵  Logs were written to "/Users/walter/Library/Preferences/.wrangler/logs/wrangler-2026-11-01_04-50-14_402.log"

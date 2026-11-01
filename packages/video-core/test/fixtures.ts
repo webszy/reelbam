@@ -42,6 +42,12 @@ export function setup(options: { routes?: readonly ProviderRoute[]; scenario?: P
   }, clock)))
   const models = new ModelRegistry([model], options.routes ?? [routeA, routeB])
   const router = new ProviderRouter(models, providers)
-  const snapshot = router.select(input)
-  return { time, clock, models, providers, router, snapshot, adapter: providers.forSnapshot(snapshot) }
+  // Invalid-route fixtures must reach the assertion before selecting a route.
+  let snapshot: ReturnType<ProviderRouter['select']> | undefined
+  const selectSnapshot = () => snapshot ??= router.select(input)
+  return {
+    time, clock, models, providers, router,
+    get snapshot() { return selectSnapshot() },
+    get adapter() { return providers.forSnapshot(selectSnapshot()) },
+  }
 }

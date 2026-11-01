@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.video.json",
+  "include": [
+    "packages/**/*.ts",
+    "server/services/video/**/*.ts",
+    "workers/video-worker/src/**/*.ts",
+    "workers/video-worker/test/**/*.ts"
+  ]
+}
