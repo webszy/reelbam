@@ -170,3 +170,78 @@ onBeforeUnmount(() => {
   <!-- The carousel script binds refs by walking this captured element tree. -->
   <div class="revolver-landing" v-html="markup" />
 </template>
+
+<style>
+.revolver-landing [data-rev-scope] {
+  height: 100svh;
+}
+
+.revolver-landing [data-rev-stage] {
+  top: 64px !important;
+  bottom: 24px !important;
+  perspective-origin: 50% 50% !important;
+}
+
+.revolver-landing [data-rev-card] {
+  aspect-ratio: 9 / 16;
+  height: auto !important;
+  border-radius: var(--rev-cardr);
+  box-shadow: 0 12px 32px rgb(12 10 8 / 12%), 0 2px 8px rgb(12 10 8 / 8%);
+}
+
+.revolver-landing [data-rev-scope]:not([data-rev-portrait-ready]) [data-rev-card] {
+  visibility: hidden !important;
+}
+
+.revolver-landing [data-rev-card] > div:first-child {
+  backface-visibility: hidden;
+}
+
+@media (max-width: 767px) {
+  .revolver-landing [data-rev-scope] {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100svh;
+    padding-bottom: 72px;
+  }
+
+  .revolver-landing [data-rev-hero] {
+    position: relative !important;
+    inset: auto !important;
+    order: 0;
+    margin: 0 24px;
+    padding-top: 104px;
+  }
+
+  .revolver-landing [data-rev-stage] {
+    position: relative !important;
+    inset: auto !important;
+    order: 1;
+    flex: none;
+    width: 100%;
+    height: min(540px, 66svh);
+    margin: 24px 0 20px;
+    overflow: visible !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+
+  .revolver-landing [data-rev-caption] {
+    position: relative !important;
+    inset: auto !important;
+    order: 2;
+    margin: 0 24px;
+  }
+}
+
+@media (max-width: 767px) and (max-height: 740px) {
+  .revolver-landing [data-rev-hero] h1 {
+    font-size: 30px !important;
+  }
+
+  .revolver-landing [data-rev-hero] > div[data-rev-reveal] {
+    margin-top: 16px !important;
+  }
+}
+</style>
