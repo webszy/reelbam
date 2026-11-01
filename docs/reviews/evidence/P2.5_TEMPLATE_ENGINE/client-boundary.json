@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "scannedFiles": 33,
+  "privatePromptsChecked": 7,
+  "privateMarkers": [
+    "internal-template-prompt",
+    "promptTemplate",
+    "offlineModelIds"
+  ],
+  "matches": []
+}

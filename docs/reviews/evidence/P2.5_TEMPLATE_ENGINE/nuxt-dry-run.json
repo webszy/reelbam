@@ -1,0 +1,18 @@
+{
+  "id": "nuxt-dry-run",
+  "command": [
+    "node",
+    "node_modules/wrangler/bin/wrangler.js",
+    "deploy",
+    "--dry-run",
+    "--config",
+    "wrangler.jsonc",
+    "--outdir",
+    "/tmp/reelbam-p25-nuxt-bundle"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 0.618,
+  "status": "PASS",
+  "counts": {},
+  "output": "nuxt-dry-run.txt"
+}

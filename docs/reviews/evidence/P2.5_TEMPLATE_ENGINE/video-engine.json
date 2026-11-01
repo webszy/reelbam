@@ -1,0 +1,20 @@
+{
+  "id": "video-engine",
+  "command": [
+    "corepack",
+    "pnpm",
+    "test:video-engine"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 4.293,
+  "status": "PASS",
+  "counts": {
+    "tests": 60,
+    "pass": 60,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "output": "video-engine.txt"
+}

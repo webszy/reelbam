@@ -1,0 +1,188 @@
+$ node --env-file-if-exists=.env node_modules/nuxt/bin/nuxt.mjs build
+.env not found. Continuing without it.
+┌  Building Nuxt for production...
+│
+●  Nuxt 4.5.2 (with Nitro 2.13.4, Vite 8.3.1 and Vue 3.5.40)
+ℹ Nuxt Icon server bundle mode is set to remote
+│
+●  Nitro preset: cloudflare-module
+ℹ Nuxt Icon client bundle consist of 43 icons with 10.40KB(uncompressed) in size
+ℹ Building client...
+ℹ vite v8.3.1 building client environment for production...
+transforming...
+✓ 953 modules transformed.
+rendering chunks...
+computing gzip size...
+ℹ node_modules/.cache/nuxt/.nuxt/dist/client/manifest.json                   9.07 kB │ gzip:  1.16 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/error-500.0YxbTsd9.css    1.90 kB │ gzip:  0.72 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/error-404.DEWwkIR3.css    2.42 kB │ gzip:  0.85 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/entry.CR2CxSvB.css      202.95 kB │ gzip: 28.40 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BDNMzG2s.js               0.08 kB │ gzip:  0.09 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DK3Fl9T5.js               0.15 kB │ gzip:  0.15 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DeR1PAlp.js               0.34 kB │ gzip:  0.26 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CW_okl8f.js               0.34 kB │ gzip:  0.26 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Dt8KaHDc.js               0.34 kB │ gzip:  0.26 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/0kXP4JVE.js               0.37 kB │ gzip:  0.27 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DbM66LrX.js               0.52 kB │ gzip:  0.36 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BMLWojE0.js               0.71 kB │ gzip:  0.40 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/iS7ZhWQo.js               1.00 kB │ gzip:  0.52 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DylJoCuh.js               1.13 kB │ gzip:  0.67 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/FUvqdMsA.js               1.34 kB │ gzip:  0.64 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CgqATvHN.js               1.99 kB │ gzip:  0.96 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BSPbnj58.js               3.40 kB │ gzip:  1.53 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DPUMviuV.js               3.75 kB │ gzip:  1.70 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CFtGrvU8.js               4.92 kB │ gzip:  2.17 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/D9-533dz.js               7.01 kB │ gzip:  1.95 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/KV1m7Ffq.js               7.28 kB │ gzip:  2.90 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Cfvi8xOV.js              12.01 kB │ gzip:  4.55 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/BOknqNlm.js              16.50 kB │ gzip:  6.08 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/eds2S-RO.js              26.99 kB │ gzip:  8.95 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/DQTBcADf.js              31.50 kB │ gzip:  9.27 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/CcT-VtSk.js              39.46 kB │ gzip:  5.90 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/Ddh5lMk-.js              41.13 kB │ gzip: 16.00 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/C1CJ25FQ.js              43.48 kB │ gzip: 13.73 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/B9jQHOFZ.js              93.11 kB │ gzip: 36.16 kB
+node_modules/.cache/nuxt/.nuxt/dist/client/_nuxt/KJOfQZ4d.js             234.41 kB │ gzip: 73.34 kB
+
+ℹ ✓ built in 3.24s
+
+ WARN  [33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 3.1s of this 3.2s build (97%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin vite-plugin-checker buildEnd (64%, 2.1s, 1 call)
+Additional callback time came from the callbacks below and from callbacks under 1s.
+2 callbacks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with node --cpu-prof:
+  - plugin nuxt:ssr-styles:client resolveId (60 calls)
+  - plugin nuxt:resolve-bare-imports resolveId (10 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+
+
+✔ Client built in 3267ms
+ℹ Building server...
+ℹ vite v8.3.1 building ssr environment for production...
+transforming...
+✓ 792 modules transformed.
+rendering chunks...
+ℹ node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-404-styles.Dw0MyPAh.mjs            0.08 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-500-styles.C8hFwwRX.mjs            0.08 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/styles.mjs                                     0.61 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/_plugin-vue_export-helper-BOaGB7Aw.js    0.26 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/server-placeholder-BEPJy3v7.js           0.60 kB │ map:     0.89 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/terms-1hNPBHVM.js                        1.33 kB │ map:     0.82 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/privacy-Cj19CkAc.js                      1.35 kB │ map:     0.82 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/refund-policy-DQytRm6E.js                1.41 kB │ map:     0.83 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/pages-3lA4QoTU.js                        1.65 kB │ map:     3.15 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/landing-9BPvtH7B.js                      2.26 kB │ map:     1.18 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/Actions-CDmrrOo7.js                      2.43 kB │ map:     1.64 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-500-styles-1.mjs-DfRjX0no.js       2.44 kB │ map:     5.29 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/login-BdRpk6-o.js                        2.47 kB │ map:     3.10 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/templates-DoreIT4S.js                    2.73 kB │ map:     3.15 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-404-styles-1.mjs-BEgHXJOZ.js       2.97 kB │ map:     5.93 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/default-CZcY1O4v.js                      4.02 kB │ map:     3.72 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-500-CtvRaVsr.js                    4.77 kB │ map:     5.69 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/error-404-Dc91v8v9.js                    5.47 kB │ map:     6.60 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/pricing-COnKBjGu.js                      5.99 kB │ map:     5.37 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/utils-BQZ6K83y.js                       11.21 kB │ map:    30.37 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/head-DA___Ibc.js                        12.86 kB │ map:    36.44 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/_nuxt/_slug_-BOJc0z85.js                      24.93 kB │ map:    47.88 kB
+node_modules/.cache/nuxt/.nuxt/dist/server/server.mjs                                   545.23 kB │ map: 1,320.38 kB
+
+ℹ ✓ built in 3.14s
+
+ WARN  [33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 3.1s of this 3.1s build (99%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin vite-plugin-checker buildEnd (70%, 2.2s, 1 call)
+Additional callback time came from the callbacks below and from callbacks under 1s.
+4 callbacks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with node --cpu-prof:
+  - plugin nuxt:resolve-externals:external resolveId (641 calls)
+  - plugin nuxt:ssr-styles:ssr resolveId (54 calls)
+  - plugin nuxt:ssr-styles:ssr transform (789 calls)
+  … and 1 more
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+
+
+✔ Server built in 3151ms
+[nitro] ✔ Generated public .output/public
+[nitro] ℹ Building Nuxt Nitro server (preset: cloudflare-module, compatibility date: 2026-07-24)
+[plugin esbuild] server/api/billing/history.get.ts: [esbuild] (server/api/billing/history.get.ts:48:16) Big integer literals are not available in the configured target environment ("es2019") and may crash at run-time
+[nitro] ✔ Nuxt Nitro server built
+  ├─ .output/server/chunks/_/aggregate.mjs (218 B) (176 B gzip)
+  ├─ .output/server/chunks/_/aggregate.mjs.map (269 B) (206 B gzip)
+  ├─ .output/server/chunks/_/billing-catalog.mjs (739 B) (275 B gzip)
+  ├─ .output/server/chunks/_/billing-catalog.mjs.map (844 B) (398 B gzip)
+  ├─ .output/server/chunks/_/client.mjs (110 kB) (24.8 kB gzip)
+  ├─ .output/server/chunks/_/client.mjs.map (19.8 kB) (5.53 kB gzip)
+  ├─ .output/server/chunks/_/error-500.mjs (4.87 kB) (2.04 kB gzip)
+  ├─ .output/server/chunks/_/error-500.mjs.map (361 B) (253 B gzip)
+  ├─ .output/server/chunks/_/order.mjs (1.77 kB) (804 B gzip)
+  ├─ .output/server/chunks/_/order.mjs.map (1.89 kB) (923 B gzip)
+  ├─ .output/server/chunks/_/shared.esm-bundler.mjs (16.8 kB) (7.28 kB gzip)
+  ├─ .output/server/chunks/_/shared.esm-bundler.mjs.map (2.99 kB) (1.4 kB gzip)
+  ├─ .output/server/chunks/_/templates.mjs (8.59 kB) (2.44 kB gzip)
+  ├─ .output/server/chunks/_/templates.mjs.map (5.01 kB) (1.68 kB gzip)
+  ├─ .output/server/chunks/_/users.mjs (143 kB) (38.5 kB gzip)
+  ├─ .output/server/chunks/_/users.mjs.map (35.3 kB) (10.9 kB gzip)
+  ├─ .output/server/chunks/build/_plugin-vue_export-helper-BOaGB7Aw.mjs (217 B) (175 B gzip)
+  ├─ .output/server/chunks/build/_plugin-vue_export-helper-BOaGB7Aw.mjs.map (307 B) (216 B gzip)
+  ├─ .output/server/chunks/build/_slug_-BOJc0z85.mjs (26.8 kB) (8.41 kB gzip)
+  ├─ .output/server/chunks/build/_slug_-BOJc0z85.mjs.map (16.8 kB) (5.98 kB gzip)
+  ├─ .output/server/chunks/build/Actions-CDmrrOo7.mjs (959 B) (522 B gzip)
+  ├─ .output/server/chunks/build/Actions-CDmrrOo7.mjs.map (1.02 kB) (503 B gzip)
+  ├─ .output/server/chunks/build/default-CZcY1O4v.mjs (2.1 kB) (909 B gzip)
+  ├─ .output/server/chunks/build/default-CZcY1O4v.mjs.map (1.59 kB) (631 B gzip)
+  ├─ .output/server/chunks/build/error-404-Dc91v8v9.mjs (4.4 kB) (2.05 kB gzip)
+  ├─ .output/server/chunks/build/error-404-Dc91v8v9.mjs.map (599 B) (406 B gzip)
+  ├─ .output/server/chunks/build/error-404-styles.Dw0MyPAh.mjs (2.54 kB) (928 B gzip)
+  ├─ .output/server/chunks/build/error-404-styles.Dw0MyPAh.mjs.map (233 B) (175 B gzip)
+  ├─ .output/server/chunks/build/error-500-CtvRaVsr.mjs (3.99 kB) (1.86 kB gzip)
+  ├─ .output/server/chunks/build/error-500-CtvRaVsr.mjs.map (491 B) (341 B gzip)
+  ├─ .output/server/chunks/build/error-500-styles.C8hFwwRX.mjs (2.01 kB) (802 B gzip)
+  ├─ .output/server/chunks/build/error-500-styles.C8hFwwRX.mjs.map (233 B) (176 B gzip)
+  ├─ .output/server/chunks/build/landing-9BPvtH7B.mjs (1.3 kB) (657 B gzip)
+  ├─ .output/server/chunks/build/landing-9BPvtH7B.mjs.map (686 B) (346 B gzip)
+  ├─ .output/server/chunks/build/login-BdRpk6-o.mjs (1.12 kB) (668 B gzip)
+  ├─ .output/server/chunks/build/login-BdRpk6-o.mjs.map (965 B) (568 B gzip)
+  ├─ .output/server/chunks/build/pages-3lA4QoTU.mjs (859 B) (550 B gzip)
+  ├─ .output/server/chunks/build/pages-3lA4QoTU.mjs.map (411 B) (289 B gzip)
+  ├─ .output/server/chunks/build/pricing-COnKBjGu.mjs (2.67 kB) (1.21 kB gzip)
+  ├─ .output/server/chunks/build/pricing-COnKBjGu.mjs.map (2.05 kB) (963 B gzip)
+  ├─ .output/server/chunks/build/privacy-Cj19CkAc.mjs (735 B) (467 B gzip)
+  ├─ .output/server/chunks/build/privacy-Cj19CkAc.mjs.map (285 B) (221 B gzip)
+  ├─ .output/server/chunks/build/refund-policy-DQytRm6E.mjs (751 B) (470 B gzip)
+  ├─ .output/server/chunks/build/refund-policy-DQytRm6E.mjs.map (297 B) (226 B gzip)
+  ├─ .output/server/chunks/build/templates-DoreIT4S.mjs (1.54 kB) (891 B gzip)
+  ├─ .output/server/chunks/build/templates-DoreIT4S.mjs.map (1.01 kB) (567 B gzip)
+  ├─ .output/server/chunks/build/terms-1hNPBHVM.mjs (733 B) (472 B gzip)
+  ├─ .output/server/chunks/build/terms-1hNPBHVM.mjs.map (281 B) (221 B gzip)
+  ├─ .output/server/chunks/nitro/nitro.mjs (135 kB) (39.2 kB gzip)
+  ├─ .output/server/chunks/nitro/nitro.mjs.map (26.7 kB) (8.39 kB gzip)
+  ├─ .output/server/chunks/routes/api/billing/checkout.post.mjs (15.2 kB) (4.65 kB gzip)
+  ├─ .output/server/chunks/routes/api/billing/checkout.post.mjs.map (17.7 kB) (6.24 kB gzip)
+  ├─ .output/server/chunks/routes/api/billing/history.get.mjs (12.4 kB) (3.57 kB gzip)
+  ├─ .output/server/chunks/routes/api/billing/history.get.mjs.map (16.2 kB) (5.83 kB gzip)
+  ├─ .output/server/chunks/routes/api/billing/orders/_id_.get.mjs (1.02 kB) (569 B gzip)
+  ├─ .output/server/chunks/routes/api/billing/orders/_id_.get.mjs.map (1.22 kB) (607 B gzip)
+  ├─ .output/server/chunks/routes/api/billing/summary.get.mjs (4.26 kB) (1.64 kB gzip)
+  ├─ .output/server/chunks/routes/api/billing/summary.get.mjs.map (5.73 kB) (2.55 kB gzip)
+  ├─ .output/server/chunks/routes/api/cards.get.mjs (291 B) (198 B gzip)
+  ├─ .output/server/chunks/routes/api/cards.get.mjs.map (249 B) (189 B gzip)
+  ├─ .output/server/chunks/routes/api/me.get.mjs (1.43 kB) (726 B gzip)
+  ├─ .output/server/chunks/routes/api/me.get.mjs.map (1.85 kB) (954 B gzip)
+  ├─ .output/server/chunks/routes/api/webhooks/creem.post.mjs (24.4 kB) (6.32 kB gzip)
+  ├─ .output/server/chunks/routes/api/webhooks/creem.post.mjs.map (26.8 kB) (9.69 kB gzip)
+  ├─ .output/server/chunks/routes/renderer.mjs (189 kB) (63.3 kB gzip)
+  ├─ .output/server/chunks/routes/renderer.mjs.map (38.9 kB) (12.7 kB gzip)
+  ├─ .output/server/chunks/virtual/_virtual_spa-template.mjs (85 B) (99 B gzip)
+  ├─ .output/server/chunks/virtual/_virtual_spa-template.mjs.map (86 B) (95 B gzip)
+  ├─ .output/server/chunks/virtual/entry.mjs (427 kB) (116 kB gzip)
+  ├─ .output/server/chunks/virtual/entry.mjs.map (86.4 kB) (23.2 kB gzip)
+  ├─ .output/server/chunks/virtual/precomputed.mjs (24.1 kB) (1.93 kB gzip)
+  ├─ .output/server/chunks/virtual/precomputed.mjs.map (467 B) (290 B gzip)
+  ├─ .output/server/chunks/virtual/styles.mjs (645 B) (318 B gzip)
+  ├─ .output/server/chunks/virtual/styles.mjs.map (219 B) (170 B gzip)
+  └─ .output/server/index.mjs (252 B) (187 B gzip)
+Σ Total size: 1.49 MB (440 kB gzip)
+ℹ Generated .output/public/_headers
+[nitro] ✔ You can preview this build using npx wrangler dev .output/server/index.mjs --assets .output/public
+[nitro] ✔ You can deploy this build using npx wrangler deploy .output/server/index.mjs --assets .output/public
+│
+└  ✨ Build complete!

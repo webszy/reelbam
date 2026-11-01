@@ -1,0 +1,14 @@
+{
+  "id": "worker-types",
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "--project",
+    "workers/video-worker/tsconfig.json"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 0.933,
+  "status": "PASS",
+  "counts": {},
+  "output": "worker-types.txt"
+}

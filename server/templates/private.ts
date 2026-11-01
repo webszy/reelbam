@@ -1,11 +1,18 @@
 /** Server-only template prompts. Do not import this module from app code or shared catalog data. */
+import type { GenerationMode, GenerationParameters } from '../../packages/video-contracts/src/public.ts'
+import { compileTemplatePrompt, TemplateEngineError, validateTemplateInputs } from '../../packages/template-core/src/index.ts'
+import { getPublishedTemplateBySlug } from '../../shared/templates.ts'
 
 export interface PrivateTemplateConfig {
-  templateId: string
-  slug: string
+  readonly templateId: string
+  readonly slug: string
+  readonly templateVersion: number
+  readonly generationMode: GenerationMode
   /** No production model is assigned. Generation stays closed until a real route exists. */
-  modelId: 'unassigned'
-  prompt: string
+  readonly modelId: string
+  readonly offlineModelIds?: Readonly<Partial<Record<'development' | 'test', string>>>
+  readonly defaultParameters: Omit<GenerationParameters, 'durationSeconds' | 'aspectRatio'>
+  readonly prompt: string
 }
 
 const PRIVATE_TEMPLATES: Readonly<Record<string, PrivateTemplateConfig>> = {
@@ -22,17 +29,29 @@ function prompt(templateId: string, slug: string, body: string): PrivateTemplate
   return {
     templateId,
     slug,
+    templateVersion: 1,
+    generationMode: 'text-to-video',
     modelId: 'unassigned',
+    offlineModelIds: { development: 'mock-motion', test: 'mock-motion' },
+    defaultParameters: { resolution: '720p' },
     prompt: `internal-template-prompt ${slug}. ${body} No readable text. No logos.`,
   }
 }
 
 export function getPrivateTemplateConfig(slug: string): PrivateTemplateConfig | undefined {
-  return PRIVATE_TEMPLATES[slug]
+  return Object.hasOwn(PRIVATE_TEMPLATES, slug) ? PRIVATE_TEMPLATES[slug] : undefined
 }
 
-export function renderPrivatePrompt(slug: string, fields: Readonly<Record<string, string>>): string | undefined {
-  const config = PRIVATE_TEMPLATES[slug]
-  if (!config) return undefined
-  return config.prompt.replace(/\{\{\s*(\w+)\s*\}\}/g, (_match, key: string) => fields[key]?.trim() ?? '')
+export function listPrivateTemplateConfigs(): readonly PrivateTemplateConfig[] {
+  return Object.values(PRIVATE_TEMPLATES)
+}
+
+export function renderPrivatePrompt(slug: string, fields: unknown): string | undefined {
+  const config = getPrivateTemplateConfig(slug)
+  const template = getPublishedTemplateBySlug(slug)
+  if (!config || !template) return undefined
+  if (config.templateId !== template.id || config.slug !== template.slug) {
+    throw new TemplateEngineError('invalid_template', 'Public/private template identity mismatch')
+  }
+  return compileTemplatePrompt(config.prompt, validateTemplateInputs(template, fields), template.inputFields)
 }

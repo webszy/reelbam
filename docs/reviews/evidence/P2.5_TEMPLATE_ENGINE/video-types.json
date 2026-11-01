@@ -1,0 +1,13 @@
+{
+  "id": "video-types",
+  "command": [
+    "corepack",
+    "pnpm",
+    "typecheck:video"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 4.704,
+  "status": "PASS",
+  "counts": {},
+  "output": "video-types.txt"
+}

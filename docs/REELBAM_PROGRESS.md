@@ -350,3 +350,27 @@ pnpm run typecheck:video
 完整变更、问题根因、覆盖矩阵、命令/原始证据、剩余事项及迁移前核对方案见 [REELBAM_P2_4_REVIEW_FIX.md](REELBAM_P2_4_REVIEW_FIX.md)。没有修改历史迁移或业务财务数据，没有远端资源操作、正式部署、付费调用、Git 提交或推送。
 
 **本轮到此停止，保持 P2.4，不自动进入 P2.5。**
+
+## P2.5 Template Engine（2026-11-01，Asia/Shanghai）
+
+按本次明确的 P2.5 指令开始工作。实际基线为 `main@1b156483132846f5eccd1296e859cfbd495568b0`，工作区干净；历史 P2.4 审查和验证记录完整保留。
+
+新增独立纯 TypeScript `packages/template-core`：严格 unknown 输入校验、字段/默认值规则、单次 Prompt 变量编译、Template Registry、既有 Model/ProviderRouter 能力验证、可生成状态，以及模板版本/输入/参数/路线快照。Server Adapter 仅组合原 `shared/templates.ts` 和 `server/templates/private.ts`，没有复制模板目录或 Prompt。原七个 Published、一个 Draft、6 秒展示参数、页面/SEO/前端表单和私有 Prompt 正文保留。
+
+私有配置增加 templateVersion=1、text-to-video、可信 720p 默认分辨率及显式 development/test 的 mock-motion 绑定。生产 modelId 继续为 unassigned，所有生产模板返回 generation_unavailable，禁止 Mock fallback；原 Generate 关闭状态与 generation_not_open 不变。renderPrivatePrompt 已复用严格 Compiler/Validator。
+
+Mock 能力统一到 Video Core 单一 catalog，由 Server/Worker 共用：时长 [5,6]、720p、显式 9:16，Model/Route revision 同步升至 2。mock-v1 adapter 不变，旧 revision 1 RouteSnapshot 仍按原 5 秒请求和保存的 Prompt 恢复。fixture 原字节不变，约 1 秒/160×90；模板请求 6 秒、Mock 模拟能力和约 6.041667 秒 Preview 是不同对象，未宣称 Mock 真实生成 6 秒视频。
+
+本轮实际执行（Node v24.19.0、Corepack pnpm 11.24.0）：test:template **101/101**、test:video **21/21**、test:data **128/128**、test:video-engine **60/60**、test:unit **151/151**。保留原 **314** 项独立测试，新增 **101** 项，合计 **415** 项去重测试；video-engine 与 data 重复的 46 项只计算一次。所有测试 0 fail、0 skipped、0 cancelled。
+
+typecheck:video 的生产/测试严格项目、Nuxt typecheck、独立 Worker 类型、lint、build、db:check 和 Nuxt/Video Worker 两次 Wrangler dry-run 全部通过。strict、noUncheckedIndexedAccess、exactOptionalPropertyTypes 保留，新增 Core/测试/Adapter 无漏检。lint 仅保留首页既有 v-html warning 1 条。新 Nuxt 客户端 33 个文本产物对七段完整私有 Prompt 及配置标记均零匹配。
+
+Neon Night 完整离线集成经过 Public/Private → Validator → Compiler → GenerationInput → ProviderRouter → RouteSnapshot；禁止写入的临时 SQLite 中解析前后余额均为 10，total_changes 不变，任务/attempt/outbox/消费 operation 均为 0，submit/poll/网络调用探针均为 0。没有调用正式 createGeneration；原 P2.4 实际 workerd/Queue/R2 回归另行全部通过。
+
+pnpm 新 workspace 检查最初受 store 路径、沙箱写权限、offline 政策元数据缓存及一次 CLI 选项使用错误影响；已使用原 store 完成 frozen install 和 1195 项政策核对，没有升级依赖。早期 import type lint 错误已修复。具体失败原因和最终结果保留在实现文档，不以跳过检查通过。
+
+P2.6 契约仅设计：source、templateId/version、templateInputsSnapshot 与原 canonicalInput/routeSnapshot 同时固定；现有 canonicalInputHash 无法区分模板来源/版本，需未来增量 Migration 和版本化业务幂等身份、旧行兼容及重放先查原任务，禁止按最新 Prompt 恢复。没有在本阶段修改 schema、迁移、积分账本、Generation Service、支付流程或 Worker 管线。
+
+验收结论：**PASS**（P2.5 本地范围）。未开放真实生成、HTTP Generation API、History/CMS，未执行真实 AI/支付调用、远端数据库操作、部署、Git 提交或推送。实现与接口见 [REELBAM_P2_5_TEMPLATE_ENGINE.md](REELBAM_P2_5_TEMPLATE_ENGINE.md)，原始输出与结果索引见 [P2.5 evidence](reviews/evidence/P2.5_TEMPLATE_ENGINE/results.json)。
+
+**完成 P2.5 后立即停止，不自动继续 P2.6。**

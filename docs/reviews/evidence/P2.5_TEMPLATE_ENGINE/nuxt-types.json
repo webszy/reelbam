@@ -1,0 +1,13 @@
+{
+  "id": "nuxt-types",
+  "command": [
+    "corepack",
+    "pnpm",
+    "typecheck"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 4.696,
+  "status": "PASS",
+  "counts": {},
+  "output": "nuxt-types.txt"
+}

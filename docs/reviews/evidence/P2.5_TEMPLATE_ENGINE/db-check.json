@@ -1,0 +1,13 @@
+{
+  "id": "db-check",
+  "command": [
+    "corepack",
+    "pnpm",
+    "db:check"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 1.242,
+  "status": "PASS",
+  "counts": {},
+  "output": "db-check.txt"
+}

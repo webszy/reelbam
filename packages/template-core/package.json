@@ -1,0 +1,11 @@
+{
+  "name": "@reelbam/template-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": {
+    "@reelbam/video-contracts": "workspace:*",
+    "@reelbam/video-core": "workspace:*"
+  }
+}

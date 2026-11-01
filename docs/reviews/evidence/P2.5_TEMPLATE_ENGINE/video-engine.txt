@@ -1,0 +1,87 @@
+$ node --experimental-transform-types --import ./scripts/alias-register.mjs --test packages/data/test/video-engine.sqlite.test.ts workers/video-worker/test/*.test.mjs workers/video-worker/test/*.test.ts
+{"event":"video_needs_review","generationId":"gen_79a0dcfb-b9ec-4324-a4a8-d69aca4e1e85","attemptId":"att_bf86f83f-8b33-493f-99d6-95877c272fc7","errorCode":"recovery_budget_exhausted"}
+{"event":"video_needs_review","generationId":"gen_eadc6758-9267-490c-82b7-8ddf038ba6fe","attemptId":"att_2a44f4a6-726c-4c3b-8b30-995f60287a5c","errorCode":"poll_budget_exhausted"}
+{"event":"video_needs_review","generationId":"gen_abf1dc89-94d5-4a3c-85ab-c6a7f1ab9a1b","errorCode":"deadline_unconfirmed"}
+{"event":"video_needs_review","generationId":"gen_f234d506-63fb-4877-8ee9-feb1859f5615","attemptId":"att_abea5403-4fb2-4f7e-81a2-e32af7a50582","errorCode":"storage_budget_exhausted"}
+{"event":"video_needs_review","generationId":"gen_0c33457a-a624-44e1-9af1-bc100fa4e9ff","errorCode":"storage_deadline_exceeded"}
+{"event":"video_needs_review","generationId":"gen_a69bd61c-b6ec-4e99-8670-e1ba6c5d33e0","attemptId":"att_fa7fd1a9-3647-49a9-8b61-74f6752f9011","errorCode":"recovery_confirmed_absent"}
+(node:87776) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ T01 creates a mock task, charges once, and writes one outbox row (43.039916ms)
+✔ T02 insufficient credits leaves no generation or outbox (19.824125ms)
+✔ outbox insert failure rolls the charge and generation back (19.840209ms)
+✔ T03 same idempotency key returns the same task and does not charge again (18.93025ms)
+✔ T04 same key with a different input conflicts (17.074209ms)
+✔ T05 a failed queue send keeps the outbox and a later send does not charge again (25.448666ms)
+✔ T06 a send that is not marked delivered can be sent again without a second submit (26.9945ms)
+✔ T07 two consumers leave one submit (19.592209ms)
+✔ T08 an expired lease can be taken over and the old token cannot write (23.064459ms)
+✔ T09 a crash after mock acceptance recovers the same request id (24.023625ms)
+✔ T10 a failed poll enqueue does not submit again (29.117417ms)
+✔ T11 pending polls do not increment submits (33.191792ms)
+✔ T12 a confirmed provider failure refunds once (28.758542ms)
+✔ T13 submission_unknown does not refund or submit twice (26.946666ms)
+✔ T14 a late failure does not change a succeeded task (26.287333ms)
+✔ R23 unresolved submission parked in needs_review never invents failure evidence or refunds (42.416459ms)
+✔ T15 an R2 object is registered again without a second submit when D1 completion fails (31.533208ms)
+✔ T16 one final asset wins when two workers store (158.715416ms)
+✔ T17 a dead letter does not refund or submit (25.472375ms)
+✔ T18 a new runner object resumes a crashed task (26.156875ms)
+✔ T19 an old route snapshot stays on its provider after the default route changes (25.52325ms)
+✔ T20 mock provider cost is zero and credits stay on the ledger (25.219625ms)
+✔ T21 a cash refund before a late generation failure keeps the clawback (26.798834ms)
+✔ T22 public preview files do not call the generation engine (2.265083ms)
+✔ R01 failed, succeeded and needs_review stop all outbox delivery (91.16125ms)
+✔ R02 replay survives route, quote and deadline changes (18.126667ms)
+✔ R03 expired poll owner cannot advance after takeover or after I/O expiry (43.773584ms)
+✔ R04 accepted, generation edge and poll event commit together; late worker cannot regress storing (22.497667ms)
+✔ R05 recovered absence followed by acceptance and crash never gets deadline refund (25.605ms)
+✔ R05 ledger itself rejects queued deadline settlement with unresolved dispatch (21.644959ms)
+✔ R06 persistent storage errors exhaust a durable budget, never Submit or refund (39.898792ms)
+✔ R07 a missing attempt never reports a successful claim (16.420292ms)
+✔ R09 dead first event recovers at deadline and settles exactly once (29.140209ms)
+✔ R10 different keys racing for the same credits cannot overspend (21.343542ms)
+✔ R11 lost commit response returns the same generation and one charge (25.19375ms)
+✔ R12 storage deadline survives restarts and does not reuse task scan timestamps (25.379667ms)
+✔ R13 exhausted successful sends stop instead of creating an endless outbox loop (25.8825ms)
+✔ R14 a failed accepted batch does not save half of the acceptance protocol (29.277666ms)
+✔ R15 same key replay does not require an input asset to remain available (18.214917ms)
+✔ R16 bounded maintenance rotates past twenty tasks without business progress (77.485875ms)
+✔ R17 exhausted poll delivery stops in needs_review without resetting its budget (23.534041ms)
+✔ R18 an old R2 writer cannot replace the winning output or register after lease takeover (27.146125ms)
+✔ R19 terminal cleanup uses a persisted cursor and protects the referenced asset (28.499584ms)
+✔ R20 repeated authoritative absence reaches one refund after the submission budget (37.358209ms)
+✔ R21 confirmed retryable rejections exhaust only the submit budget (30.06ms)
+✔ R22 concurrent identical creation keys return one generation and one charge (21.987458ms)
+(node:87777) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ actual Worker scheduled handler recovers R2 put / D1 registration failure across a workerd restart (2072.161125ms)
+{"event":"video_needs_review","generationId":"gen_256f7fc2-5a71-49f8-8b33-babf97deb69e","attemptId":"att_fa7012ae-8254-4b39-86dc-251bb8d3c6a0","errorCode":"provider_adapter_missing"}
+✔ actual Worker rejects an invalid environment and production never executes a saved Mock route (1203.897333ms)
+(node:87778) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Worker rejects APP_ENVIRONMENT=undefined before accessing bindings (1.210375ms)
+✔ Worker rejects APP_ENVIRONMENT="" before accessing bindings (0.126375ms)
+✔ Worker rejects APP_ENVIRONMENT=" " before accessing bindings (0.0825ms)
+✔ Worker rejects APP_ENVIRONMENT="staging" before accessing bindings (0.085125ms)
+✔ Worker rejects APP_ENVIRONMENT="Production" before accessing bindings (0.105042ms)
+✔ Worker rejects APP_ENVIRONMENT="development " before accessing bindings (0.076584ms)
+✔ Worker rejects APP_ENVIRONMENT="dev" before accessing bindings (0.102666ms)
+✔ Worker enables Mock only in development/test and registers no production fallback (9.094041ms)
+(node:87779) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Mock runtime bytes equal a small, hashed MP4 with a video track (1.598833ms)
+✔ Mock fixture decodes to ten H.264 video frames with FFmpeg (89.962541ms)
+{"event":"video_message_failed","source":"queue","generationId":"gen","attemptId":null,"eventId":"bad"}
+(node:87780) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ a failed queue item retries without replaying successful batch items (0.904542ms)
+✔ producer and consumer workers deliver a queue message into shared D1 (369.778667ms)
+ℹ tests 60
+ℹ suites 0
+ℹ pass 60
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4016.439334

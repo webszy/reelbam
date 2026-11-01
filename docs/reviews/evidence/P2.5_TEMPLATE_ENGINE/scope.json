@@ -1,0 +1,25 @@
+{
+  "head": "1b156483132846f5eccd1296e859cfbd495568b0",
+  "initialBranch": "main",
+  "initialWorkingTree": "clean",
+  "protectedScopes": [
+    "app",
+    "shared",
+    "packages/data",
+    "server/services/video",
+    "server/api",
+    "server/utils/zBilling",
+    "drizzle",
+    "database",
+    "nuxt.config.ts",
+    "wrangler.jsonc",
+    "wrangler.video-local.jsonc",
+    "workers/video-worker/wrangler.jsonc",
+    "workers/video-worker/fixtures",
+    "workers/video-worker/src/fixture.ts"
+  ],
+  "changedProtectedFiles": [],
+  "originalPrivatePromptsUnchanged": 7,
+  "fixtureSHA256": "665cc61f99b795554a96a73f9b7e3a6c61c91874501111f6c1d874076f6c4e29",
+  "fixtureBytes": 1932
+}

@@ -15,6 +15,7 @@
     "typecheck:video": "tsc --project tsconfig.video.json && tsc --project tsconfig.video-tests.json",
     "typecheck:video-bindings": "node scripts/check-video-bindings.mjs",
     "test:video": "node --experimental-transform-types --test packages/video-core/test/*.test.ts",
+    "test:template": "node --experimental-transform-types --import ./scripts/alias-register.mjs --test packages/template-core/test/*.test.ts server/templates/engine.test.ts",
     "test:data": "node --experimental-transform-types --import ./scripts/alias-register.mjs --test packages/data/test/*.test.ts",
     "test:video-engine": "node --experimental-transform-types --import ./scripts/alias-register.mjs --test packages/data/test/video-engine.sqlite.test.ts workers/video-worker/test/*.test.mjs workers/video-worker/test/*.test.ts",
     "test:video-fixture": "node --experimental-transform-types --test workers/video-worker/test/fixture.test.mjs",

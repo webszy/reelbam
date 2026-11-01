@@ -3,6 +3,7 @@
   "include": [
     "packages/**/*.ts",
     "server/services/video/**/*.ts",
+    "server/templates/**/*.ts",
     "workers/video-worker/src/**/*.ts",
     "workers/video-worker/test/**/*.ts"
   ]

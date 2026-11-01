@@ -76,6 +76,15 @@ importers:
         specifier: 0.45.2
         version: 0.45.2
 
+  packages/template-core:
+    dependencies:
+      '@reelbam/video-contracts':
+        specifier: workspace:*
+        version: link:../video-contracts
+      '@reelbam/video-core':
+        specifier: workspace:*
+        version: link:../video-core
+
   packages/video-contracts: {}
 
   packages/video-core:

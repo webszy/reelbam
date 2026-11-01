@@ -1,0 +1,140 @@
+{
+  "head": "1b156483132846f5eccd1296e859cfbd495568b0",
+  "branch": "main",
+  "trackedModifiedFiles": 9,
+  "newSourceAndDocumentFiles": 17,
+  "stagedFiles": 0,
+  "files": [
+    {
+      "path": "docs/REELBAM_PROGRESS.md",
+      "gitStatus": " M",
+      "sha256": "a6eaf313c9ad08865b5225159a5fcd2823b032395ed420c61ee459229cc5e19a"
+    },
+    {
+      "path": "package.json",
+      "gitStatus": " M",
+      "sha256": "f7c5f3b7116243dfadf28fc202775872d41c73058fb3486ca9bdfe030bdb09e8"
+    },
+    {
+      "path": "packages/video-core/src/index.ts",
+      "gitStatus": " M",
+      "sha256": "c3c483740b1349c4ce60befbc3aba83b40f4c9561b2557aa6b60ea3f2ef05134"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "gitStatus": " M",
+      "sha256": "e18ea452c6cb02f6e61ac3ba2f35d004f6cc1968229549a81c904acad961bda9"
+    },
+    {
+      "path": "server/templates/private.ts",
+      "gitStatus": " M",
+      "sha256": "90fc95df886ffa286816bdf7a02a99cb919d5f3116c7e3213231bca5b4666042"
+    },
+    {
+      "path": "server/templates/text-to-video.ts",
+      "gitStatus": " M",
+      "sha256": "7b4cf9e3e006014f449b25f438d0ec01cd63637c2211587457bd81ed858b1d8e"
+    },
+    {
+      "path": "tsconfig.video-tests.json",
+      "gitStatus": " M",
+      "sha256": "a76c4590248a3681856a966ff98466ac73344c56fcb810bb285f2232ed7b059a"
+    },
+    {
+      "path": "tsconfig.video.json",
+      "gitStatus": " M",
+      "sha256": "2145efe6d55a15e12dbe363eb9c87e824660bf86f2b28274e4c85e8a87b47e78"
+    },
+    {
+      "path": "workers/video-worker/src/catalog.ts",
+      "gitStatus": " M",
+      "sha256": "04253e095f3936ddd7c4a865ea9efa4275af50e1ca28736950be3b752a29548d"
+    },
+    {
+      "path": "docs/REELBAM_P2_5_TEMPLATE_ENGINE.md",
+      "gitStatus": "??",
+      "sha256": "f424a52f95b58e76e400996ac7b24790b86208d187c17b66aa796717d765ac7e"
+    },
+    {
+      "path": "packages/template-core/package.json",
+      "gitStatus": "??",
+      "sha256": "f3d7eee284d29fc849909da3be2aa6eea6084b0c6b9eeb716d42c39236d62dbf"
+    },
+    {
+      "path": "packages/template-core/src/compiler.ts",
+      "gitStatus": "??",
+      "sha256": "6e3b4b7ba9bee2e8192b4e96696f5d99c708bf4106718830d83277f6497a147c"
+    },
+    {
+      "path": "packages/template-core/src/errors.ts",
+      "gitStatus": "??",
+      "sha256": "bf83477a56a2281b259394c6da55bb6f08a06b2d63a82b7102055d64cfe82f0b"
+    },
+    {
+      "path": "packages/template-core/src/index.ts",
+      "gitStatus": "??",
+      "sha256": "283e0cc60ce6cfc426fa9a457551d3bea726d01df4dcc38bf3cd02e608af6529"
+    },
+    {
+      "path": "packages/template-core/src/registry.ts",
+      "gitStatus": "??",
+      "sha256": "3f8dba319c4e0934bfde7475f118b69136adcfbcdf85bc116827cadfdc6af4cd"
+    },
+    {
+      "path": "packages/template-core/src/resolver.ts",
+      "gitStatus": "??",
+      "sha256": "82d20d3fc7fe1afc2d7a74ee32b22a3de7a0f020eedb619c3fd755c7140c6a8e"
+    },
+    {
+      "path": "packages/template-core/src/types.ts",
+      "gitStatus": "??",
+      "sha256": "1799d95044385041834e03eb3b36b8549ad17499bf99247b1712a58a20ff569c"
+    },
+    {
+      "path": "packages/template-core/src/validator.ts",
+      "gitStatus": "??",
+      "sha256": "b4b287db523745330298939c2ec4115d197ea32b1e94445d0977100798c9dae3"
+    },
+    {
+      "path": "packages/template-core/test/compiler.test.ts",
+      "gitStatus": "??",
+      "sha256": "b04a7323d9f7027eb1dbde091f149bc485f377fef057ed63150df9abc954796e"
+    },
+    {
+      "path": "packages/template-core/test/fixtures.ts",
+      "gitStatus": "??",
+      "sha256": "2b2b0e6b65096cc12a3384d479e5e7484f949253691c6c3ace88419af49c6e20"
+    },
+    {
+      "path": "packages/template-core/test/registry.test.ts",
+      "gitStatus": "??",
+      "sha256": "8e8479ffacd92df82883802e14adedeb8314f1f76c55f839f41447e1caafde02"
+    },
+    {
+      "path": "packages/template-core/test/resolver.test.ts",
+      "gitStatus": "??",
+      "sha256": "a63d714b9535aa9cfd1147a129e962b144ac74921ceb9f7950bc9aa396882ba7"
+    },
+    {
+      "path": "packages/template-core/test/validator.test.ts",
+      "gitStatus": "??",
+      "sha256": "c2fa7389533f912f71f8ba20c782a9740000df8e8e414739a216ad1f0c457905"
+    },
+    {
+      "path": "packages/video-core/src/development-catalog.ts",
+      "gitStatus": "??",
+      "sha256": "f26c16c48ff60be5a41dd98b762f5ee4f57943eefb379f202c6fd1a449b46daa"
+    },
+    {
+      "path": "server/templates/engine.test.ts",
+      "gitStatus": "??",
+      "sha256": "2b24f65e562131a0ee67dc237a8607ccc582a537bc03bc3cdd060b7805fffa52"
+    },
+    {
+      "path": "server/templates/engine.ts",
+      "gitStatus": "??",
+      "sha256": "a5907aba606b0ec7518bf0876ac51a0e9905a55d27f55be9b28e6503464000bd"
+    }
+  ],
+  "evidenceFileCountBeforeThisManifest": 31
+}

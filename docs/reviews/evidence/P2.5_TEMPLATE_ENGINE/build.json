@@ -1,0 +1,13 @@
+{
+  "id": "build",
+  "command": [
+    "corepack",
+    "pnpm",
+    "build"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 11.931,
+  "status": "PASS",
+  "counts": {},
+  "output": "build.txt"
+}

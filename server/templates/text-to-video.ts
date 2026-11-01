@@ -1,5 +1,5 @@
-import { getPublishedTemplateBySlug } from '~~/shared/templates'
-import { getPrivateTemplateConfig } from './private'
+import { getPublishedTemplateBySlug } from '../../shared/templates.ts'
+import { getPrivateTemplateConfig } from './private.ts'
 
 export interface TextToVideoPrepareResult {
   available: false

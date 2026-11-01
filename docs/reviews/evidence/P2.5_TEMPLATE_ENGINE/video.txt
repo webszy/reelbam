@@ -1,0 +1,48 @@
+$ node --experimental-transform-types --test packages/video-core/test/*.test.ts
+(node:87592) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ 公开输入与能力约束
+  ✔ 三种模式的必填输入和非法字段都在运行时校验 (0.915792ms)
+  ✔ Prompt 和可选参数受模型能力控制 (0.177791ms)
+  ✔ 仅公共入口和显式投影提供前端字段 (1.368083ms)
+✔ 公开输入与能力约束 (2.901042ms)
+▶ Model Registry
+  ✔ 查询模型和多个路线，拒绝重复/不存在的配置 (0.184625ms)
+  ✔ Route 不得扩大模型声明，注册后不受外部配置修改影响 (0.126875ms)
+✔ Model Registry (0.385792ms)
+(node:87593) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ 可持久化 Mock Provider
+  ✔ accepted → pending → completed；仅有 fixture 引用和明确 0 成本 (1.627375ms)
+  ✔ 重建 adapter 使用原 handle/metadata，不能随新配置重置任务结果/时间 (0.313292ms)
+  ✔ rejected 确认没有任务；unknown 保留恢复信息且不当作失败 (0.598208ms)
+  ✔ 恢复可以确认未接单或继续不明确，不自动重提 (0.376042ms)
+  ✔ 查询临时异常与上游 failed 分开；hang 不需要定时器 (0.73575ms)
+  ✔ 拒绝错误 Route/handle/metadata 和不明确的启用环境 (0.401125ms)
+  ✔ 调用错误分类不包含自动重提许可 (0.059208ms)
+✔ 可持久化 Mock Provider (4.594667ms)
+(node:87594) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ 确定性多 Provider Route
+  ✔ 按实际能力筛选：较高优先级 A 不支持时选择 B (1.243709ms)
+  ✔ 优先级相同使用 Route ID 排序，与注册次序无关 (0.336ms)
+  ✔ 禁用 A 只改变新任务；旧快照经 JSON 保存后仍解析原 Provider/版本 (0.541542ms)
+  ✔ 不存在的模型、不支持的模式/参数、任意内部字段及无路线时明确失败 (0.362083ms)
+  ✔ 新增 Provider 不改变纯状态机，也不会自动 fallback (0.192875ms)
+✔ 确定性多 Provider Route (3.218875ms)
+(node:87595) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ 纯任务状态机
+  ✔ 合法成功流程必须先受理、查询完成、保存输出 (0.539792ms)
+  ✔ 明确拒绝/终态失败可失败；提交异常或 unknown 必须先恢复或人工处理 (0.337292ms)
+  ✔ 已受理轮询失败不重新 submit，存储失败不重新生成 (0.239542ms)
+  ✔ 两种终态拒绝所有迟到事件，不能互相覆盖或重新开始 (0.488084ms)
+✔ 纯任务状态机 (10.116875ms)
+ℹ tests 21
+ℹ suites 5
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 136.689458

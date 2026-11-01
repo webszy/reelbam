@@ -1,0 +1,1 @@
+$ tsc --project tsconfig.video.json && tsc --project tsconfig.video-tests.json

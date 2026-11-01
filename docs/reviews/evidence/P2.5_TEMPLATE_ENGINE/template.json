@@ -1,0 +1,20 @@
+{
+  "id": "template",
+  "command": [
+    "corepack",
+    "pnpm",
+    "test:template"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 0.766,
+  "status": "PASS",
+  "counts": {
+    "tests": 101,
+    "pass": 101,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "output": "template.txt"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "unit",
+  "command": [
+    "corepack",
+    "pnpm",
+    "test:unit"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 1.945,
+  "status": "PASS",
+  "counts": {
+    "tests": 151,
+    "pass": 151,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "output": "unit.txt"
+}

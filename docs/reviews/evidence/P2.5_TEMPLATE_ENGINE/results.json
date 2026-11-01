@@ -1,0 +1,237 @@
+{
+  "date": "2026-11-01",
+  "timezone": "Asia/Shanghai",
+  "conclusion": "PASS",
+  "existingUniqueTests": 314,
+  "newUniqueTests": 101,
+  "totalUniqueTests": 415,
+  "duplicateEngineTests": 46,
+  "checks": [
+    {
+      "id": "build",
+      "command": [
+        "corepack",
+        "pnpm",
+        "build"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 11.931,
+      "status": "PASS",
+      "counts": {},
+      "output": "build.txt"
+    },
+    {
+      "id": "data",
+      "command": [
+        "corepack",
+        "pnpm",
+        "test:data"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 4.968,
+      "status": "PASS",
+      "counts": {
+        "tests": 128,
+        "pass": 128,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "output": "data.txt"
+    },
+    {
+      "id": "db-check",
+      "command": [
+        "corepack",
+        "pnpm",
+        "db:check"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 1.242,
+      "status": "PASS",
+      "counts": {},
+      "output": "db-check.txt"
+    },
+    {
+      "id": "lint",
+      "command": [
+        "corepack",
+        "pnpm",
+        "lint"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 5.397,
+      "status": "PASS",
+      "counts": {},
+      "output": "lint.txt"
+    },
+    {
+      "id": "nuxt-dry-run",
+      "command": [
+        "node",
+        "node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "--config",
+        "wrangler.jsonc",
+        "--outdir",
+        "/tmp/reelbam-p25-nuxt-bundle"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.618,
+      "status": "PASS",
+      "counts": {},
+      "output": "nuxt-dry-run.txt"
+    },
+    {
+      "id": "nuxt-types",
+      "command": [
+        "corepack",
+        "pnpm",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 4.696,
+      "status": "PASS",
+      "counts": {},
+      "output": "nuxt-types.txt"
+    },
+    {
+      "id": "template",
+      "command": [
+        "corepack",
+        "pnpm",
+        "test:template"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.766,
+      "status": "PASS",
+      "counts": {
+        "tests": 101,
+        "pass": 101,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "output": "template.txt"
+    },
+    {
+      "id": "unit",
+      "command": [
+        "corepack",
+        "pnpm",
+        "test:unit"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 1.945,
+      "status": "PASS",
+      "counts": {
+        "tests": 151,
+        "pass": 151,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "output": "unit.txt"
+    },
+    {
+      "id": "video-engine",
+      "command": [
+        "corepack",
+        "pnpm",
+        "test:video-engine"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 4.293,
+      "status": "PASS",
+      "counts": {
+        "tests": 60,
+        "pass": 60,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "output": "video-engine.txt"
+    },
+    {
+      "id": "video-types",
+      "command": [
+        "corepack",
+        "pnpm",
+        "typecheck:video"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 4.704,
+      "status": "PASS",
+      "counts": {},
+      "output": "video-types.txt"
+    },
+    {
+      "id": "video",
+      "command": [
+        "corepack",
+        "pnpm",
+        "test:video"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.448,
+      "status": "PASS",
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "output": "video.txt"
+    },
+    {
+      "id": "worker-dry-run",
+      "command": [
+        "node",
+        "node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "--config",
+        "workers/video-worker/wrangler.jsonc",
+        "--outdir",
+        "/tmp/reelbam-p25-worker-bundle"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.503,
+      "status": "PASS",
+      "counts": {},
+      "output": "worker-dry-run.txt"
+    },
+    {
+      "id": "worker-types",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "workers/video-worker/tsconfig.json"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.933,
+      "status": "PASS",
+      "counts": {},
+      "output": "worker-types.txt"
+    }
+  ],
+  "additionalEvidence": [
+    "client-boundary.json",
+    "type-boundaries.json",
+    "scope.json"
+  ],
+  "notes": [
+    "video-engine repeats 46 data tests; counted only once",
+    "No skipped/cancelled tests",
+    "Existing Revolver v-html lint warning retained",
+    "Wrangler dry-run only; no deployment"
+  ]
+}

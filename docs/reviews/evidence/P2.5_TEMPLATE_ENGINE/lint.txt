@@ -1,0 +1,7 @@
+$ eslint .
+
+/Volumes/Development/Workspace/reelbam/app/components/home/RevolverStage.client.vue
+  171:33  warning  'v-html' directive can lead to XSS attack  vue/no-v-html
+
+✖ 1 problem (0 errors, 1 warning)
+

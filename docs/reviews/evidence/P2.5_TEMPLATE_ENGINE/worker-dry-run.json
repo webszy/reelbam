@@ -1,0 +1,18 @@
+{
+  "id": "worker-dry-run",
+  "command": [
+    "node",
+    "node_modules/wrangler/bin/wrangler.js",
+    "deploy",
+    "--dry-run",
+    "--config",
+    "workers/video-worker/wrangler.jsonc",
+    "--outdir",
+    "/tmp/reelbam-p25-worker-bundle"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 0.503,
+  "status": "PASS",
+  "counts": {},
+  "output": "worker-dry-run.txt"
+}

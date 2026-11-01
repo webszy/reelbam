@@ -2,6 +2,7 @@ export { ModelRegistry } from './model-registry.ts'
 export { ProviderRouter, RoutingError } from './router.ts'
 export { ProviderRegistry } from './providers/registry.ts'
 export { createMockProvider } from './providers/mock.ts'
+export { createLocalMockRegistries, LOCAL_MOCK_MODEL, LOCAL_MOCK_ROUTE } from './development-catalog.ts'
 export type { MockProviderConfig, MockScenario } from './providers/mock.ts'
 export { ProviderError } from './provider.ts'
 export type {

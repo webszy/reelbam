@@ -1,0 +1,29 @@
+{
+  "strict": true,
+  "noUncheckedIndexedAccess": true,
+  "exactOptionalPropertyTypes": true,
+  "productionSources": [
+    "packages/template-core/src/errors.ts",
+    "packages/template-core/src/resolver.ts",
+    "packages/template-core/src/types.ts",
+    "packages/template-core/src/registry.ts",
+    "packages/template-core/src/index.ts",
+    "packages/template-core/src/compiler.ts",
+    "packages/template-core/src/validator.ts",
+    "server/templates/private.ts",
+    "server/templates/engine.ts",
+    "server/templates/text-to-video.ts"
+  ],
+  "testSources": [
+    "packages/template-core/test/fixtures.ts",
+    "packages/template-core/test/compiler.test.ts",
+    "packages/template-core/test/resolver.test.ts",
+    "packages/template-core/test/registry.test.ts",
+    "packages/template-core/test/validator.test.ts",
+    "server/templates/engine.test.ts",
+    "server/templates/text-to-video.test.ts"
+  ],
+  "missingProductionSources": [],
+  "missingTestSources": [],
+  "productionIncludesTestGlobals": false
+}

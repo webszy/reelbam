@@ -1,0 +1,20 @@
+{
+  "id": "video",
+  "command": [
+    "corepack",
+    "pnpm",
+    "test:video"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 0.448,
+  "status": "PASS",
+  "counts": {
+    "tests": 21,
+    "pass": 21,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "output": "video.txt"
+}

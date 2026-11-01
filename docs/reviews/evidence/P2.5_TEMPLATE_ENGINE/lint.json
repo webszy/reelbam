@@ -1,0 +1,13 @@
+{
+  "id": "lint",
+  "command": [
+    "corepack",
+    "pnpm",
+    "lint"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 5.397,
+  "status": "PASS",
+  "counts": {},
+  "output": "lint.txt"
+}
